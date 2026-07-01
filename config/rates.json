@@ -1,0 +1,7 @@
+{
+  "_comment": "Fallback only. fetch-data.mjs fetches these live from the free SARB Web API (custom.resbank.co.za/SarbWebApi) every run; these values are only used if that request fails. Update by hand occasionally so the fallback doesn't go too stale.",
+  "asOf": "2026-06-01",
+  "primeRate": 10.50,
+  "repoRate": 7.00,
+  "jibar3m": 6.87
+}

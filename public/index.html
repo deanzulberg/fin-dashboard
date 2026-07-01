@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Market Dashboard</title>
+<meta name="theme-color" content="#111a24" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<style>
+  :root {
+    /* "Dim" night theme — dark enough to be easy on the eyes, but a soft
+       blue-charcoal rather than flat black, so contrast stays comfortable. */
+    --bg: #111a24;
+    --bg2: #182430;
+    --card: #1d2a37;
+    --text: #e9eff5;
+    --muted: #92a2b5;
+    --up: #3ddc84;
+    --down: #ff6b6e;
+    --border: #2d3d4d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    /* Soft colour glows (echoing the flag palette used in the panels) + a
+       faint tiled candlestick-chart pattern, for an investing/markets feel
+       instead of a plain grid. */
+    background-image:
+      radial-gradient(650px circle at 10% -8%, rgba(0, 200, 130, 0.22), transparent 60%),
+      radial-gradient(550px circle at 100% 8%, rgba(60, 120, 240, 0.20), transparent 60%),
+      radial-gradient(600px circle at 45% 105%, rgba(220, 60, 80, 0.16), transparent 55%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='80'%3E%3Cg stroke='white' stroke-opacity='0.06' fill='white' fill-opacity='0.05'%3E%3Cline x1='10' y1='6' x2='10' y2='34' stroke-width='1'/%3E%3Crect x='6' y='14' width='8' height='14'/%3E%3Cline x1='30' y1='40' x2='30' y2='76' stroke-width='1'/%3E%3Crect x='26' y='48' width='8' height='20'/%3E%3Cline x1='50' y1='2' x2='50' y2='28' stroke-width='1'/%3E%3Crect x='46' y='8' width='8' height='16'/%3E%3C/g%3E%3C/svg%3E"),
+      linear-gradient(180deg, var(--bg2) 0%, var(--bg) 60%);
+    background-repeat: no-repeat, no-repeat, no-repeat, repeat, no-repeat;
+    background-size: auto, auto, auto, 60px 80px, cover;
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 14px 14px 40px;
+    font-size: 15px;
+  }
+  h1 { font-size: 1.2rem; margin: 4px 0 2px; color: var(--text); }
+  h2 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin: 24px 0 8px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 5px;
+  }
+  #meta { color: var(--muted); font-size: 0.78rem; margin-bottom: 2px; }
+  #warning {
+    display: none;
+    background: #4a2a12;
+    color: #ffb266;
+    border: 1px solid #7a4a1f;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    margin: 10px 0;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  .tile {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 11px 13px;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+  }
+  .tile .label { color: var(--muted); font-size: 0.72rem; }
+  .tile .value { font-size: 1.05rem; font-weight: 600; margin-top: 2px; }
+  .chg { font-size: 0.8rem; margin-top: 2px; font-weight: 600; }
+  .up { color: var(--up); }
+  .down { color: var(--down); }
+  .flat { color: var(--muted); }
+
+  /* Colour panel: the ACTUAL background behind a whole single-entity section
+     (one country/one rate group) — the flag/brand colour lives here, tiles
+     inside stay plain so numbers stay easy to read. */
+  .panel {
+    border-radius: 14px;
+    padding: 12px 12px 2px;
+    margin-bottom: 4px;
+  }
+  .panel .tile { background: rgba(6, 10, 16, 0.55); border-color: rgba(255, 255, 255, 0.1); }
+
+  /* Colour strip: for sections that mix several different countries/items in
+     one list (Forex, Commodities, Indices, Crypto) — each item is a full-width
+     coloured row instead of a small coloured square. */
+  .strip-list { display: flex; flex-direction: column; gap: 8px; }
+  .strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-radius: 10px;
+    padding: 10px 14px;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+  }
+  .strip-label { font-size: 0.85rem; font-weight: 600; }
+  .strip-right { display: flex; align-items: baseline; gap: 10px; }
+  .strip-value { font-size: 1rem; font-weight: 700; }
+  .strip .chg { margin-top: 0; min-width: 58px; text-align: right; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  th, td { text-align: right; padding: 6px 4px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 500; font-size: 0.7rem; text-transform: uppercase; }
+  .account-table {
+    overflow-x: auto;
+    margin-bottom: 6px;
+    padding: 4px 10px;
+  }
+  .panel .account-table table { background: rgba(4, 7, 11, 0.85); border-radius: 8px; }
+  .panel .account-table th { color: #b7c2cf; }
+  .panel .account-table td { color: var(--text); }
+
+  footer { color: var(--muted); font-size: 0.7rem; text-align: center; margin-top: 30px; }
+</style>
+</head>
+<body>
+  <h1>Market Dashboard</h1>
+  <div id="meta">Loading…</div>
+  <div style="color:var(--muted);font-size:0.72rem;margin-bottom:2px">All "Chg%" figures are daily change (vs previous close).</div>
+  <div id="warning"></div>
+
+  <h2>Forex (ZAR per unit)</h2>
+  <div class="strip-list" id="forex"></div>
+
+  <h2>Commodities (USD)</h2>
+  <div class="strip-list" id="commodities"></div>
+
+  <h2>Indices</h2>
+  <div class="strip-list" id="indices"></div>
+
+  <h2>Crypto (USD)</h2>
+  <div class="strip-list" id="crypto"></div>
+
+  <h2>Risk &amp; Rates</h2>
+  <div class="strip-list" id="risk"></div>
+
+  <div id="rates-wrap"></div>
+  <div id="rates-note"></div>
+
+  <div id="macro-sections"></div>
+
+  <div id="watchlist-sections"></div>
+
+  <footer>Data refreshes on its own schedule server-side; this page polls every few minutes.</footer>
+
+<script>
+const fmtZARc = (n) => n == null ? "—" : "R" + n.toLocaleString("en-ZA", { maximumFractionDigits: 2 });
+const fmtUSD = (n, dp = 2) => n == null ? "—" : "$" + n.toLocaleString("en-US", { maximumFractionDigits: dp });
+const fmtNum = (n, dp = 2) => n == null ? "—" : n.toLocaleString("en-ZA", { maximumFractionDigits: dp });
+const fmtPct = (n) => n == null ? "—" : (n > 0 ? "+" : "") + n.toFixed(2) + "%";
+const pctStr = (n) => n == null ? "—" : n + "%";
+const pctClass = (n) => n == null ? "flat" : n > 0 ? "up" : n < 0 ? "down" : "flat";
+
+// Real flag colours (one primary shade per country) and brand colours for commodities/crypto,
+// used as a small accent stripe + icon per tile so each section reads at a glance.
+// Windows doesn't render country-flag emoji as pictures (it falls back to plain
+// two-letter text), so real flags are drawn as small inline SVGs instead —
+// these render identically on every platform.
+const FLAG_SVG = {
+  ZA: `<svg width="20" height="14" viewBox="0 0 20 14" style="vertical-align:-3px;border-radius:2px"><rect width="20" height="14" fill="#fff"/><polygon points="0,0 20,0 20,5.2 7.5,5.2 0,1" fill="#E03C31"/><polygon points="0,14 20,14 20,8.8 7.5,8.8 0,13" fill="#001489"/><polygon points="0,1.5 7.5,5.7 7.5,8.3 0,12.5" fill="#FFB81C"/><polygon points="0,2.3 6.3,6.1 6.3,7.9 0,11.7" fill="#000"/><polygon points="7.5,5.7 20,5.7 20,8.3 7.5,8.3" fill="#007749"/></svg>`,
+  US: `<svg width="20" height="14" viewBox="0 0 20 14" style="vertical-align:-3px;border-radius:2px"><rect width="20" height="14" fill="#B22234"/><rect y="1.08" width="20" height="1.08" fill="#fff"/><rect y="3.23" width="20" height="1.08" fill="#fff"/><rect y="5.38" width="20" height="1.08" fill="#fff"/><rect y="7.54" width="20" height="1.08" fill="#fff"/><rect y="9.69" width="20" height="1.08" fill="#fff"/><rect y="11.85" width="20" height="1.08" fill="#fff"/><rect width="8" height="7.54" fill="#3C3B6E"/></svg>`,
+  GB: `<svg width="20" height="14" viewBox="0 0 20 14" style="vertical-align:-3px;border-radius:2px"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#fff" stroke-width="2.8"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.4"/><rect x="8" width="4" height="14" fill="#fff"/><rect y="5" width="20" height="4" fill="#fff"/><rect x="8.8" width="2.4" height="14" fill="#C8102E"/><rect y="5.8" width="20" height="2.4" fill="#C8102E"/></svg>`,
+  EU: `<svg width="20" height="14" viewBox="0 0 20 14" style="vertical-align:-3px;border-radius:2px"><rect width="20" height="14" fill="#003399"/><circle cx="10" cy="3" r="0.9" fill="#FFCC00"/><circle cx="13.5" cy="4.2" r="0.9" fill="#FFCC00"/><circle cx="15" cy="7" r="0.9" fill="#FFCC00"/><circle cx="13.5" cy="9.8" r="0.9" fill="#FFCC00"/><circle cx="10" cy="11" r="0.9" fill="#FFCC00"/><circle cx="6.5" cy="9.8" r="0.9" fill="#FFCC00"/><circle cx="5" cy="7" r="0.9" fill="#FFCC00"/><circle cx="6.5" cy="4.2" r="0.9" fill="#FFCC00"/></svg>`,
+  CN: `<svg width="20" height="14" viewBox="0 0 20 14" style="vertical-align:-3px;border-radius:2px"><rect width="20" height="14" fill="#DE2910"/><circle cx="5" cy="4" r="1.8" fill="#FFDE00"/><circle cx="9.5" cy="2.2" r="0.7" fill="#FFDE00"/><circle cx="11" cy="4.3" r="0.7" fill="#FFDE00"/><circle cx="10.3" cy="6.8" r="0.7" fill="#FFDE00"/><circle cx="8" cy="7.2" r="0.7" fill="#FFDE00"/></svg>`,
+};
+// meta.flagCode -> real flag SVG; meta.flag -> a plain emoji (fine for non-flag icons,
+// only country flags have the Windows rendering problem).
+function metaIcon(meta) {
+  if (!meta) return "";
+  if (meta.flagCode) return FLAG_SVG[meta.flagCode] ?? "";
+  return meta.flag ?? "";
+}
+
+// Single-entity sections (one whole panel = one country) use real flag colours —
+// there's no clash risk since each panel only ever represents one country.
+const COUNTRY = {
+  ZA: { flagCode: "ZA", color: "#007A4D" },
+  US: { flagCode: "US", color: "#B22234" },
+  GB: { flagCode: "GB", color: "#1D4ED8" },
+  GLOBAL: { flag: "🌍", color: "#3498db" },
+};
+const WATCHLIST_COUNTRY = { jse: "ZA", tfsa: "ZA", us: "US" };
+const REGION_COUNTRY = { sa: "ZA", us: "US", uk: "GB", global: "GLOBAL" };
+
+// Every section pulls from the SAME per-country colour above — a currency,
+// index, bond, or watchlist tied to a country always gets that one country's
+// colour, wherever it appears, instead of each section picking its own.
+const EU_COLOR = "#6366F1"; // EU has no single-country panel, so it needs its own constant
+const CN_COLOR = "#F59E0B"; // same for China — only ever appears in Forex
+
+const FOREX_META = {
+  USD: { flagCode: "US", color: COUNTRY.US.color },
+  EUR: { flagCode: "EU", color: EU_COLOR },
+  GBP: { flagCode: "GB", color: COUNTRY.GB.color },
+  CNY: { flagCode: "CN", color: CN_COLOR },
+};
+const INDEX_META = {
+  "^J200.JO": { flagCode: "ZA", color: COUNTRY.ZA.color },
+  "^J203.JO": { flagCode: "ZA", color: COUNTRY.ZA.color },
+  "^GSPC": { flagCode: "US", color: COUNTRY.US.color },
+  "^IXIC": { flagCode: "US", color: COUNTRY.US.color },
+  "^DJI": { flagCode: "US", color: COUNTRY.US.color },
+  "^FTSE": { flagCode: "GB", color: COUNTRY.GB.color },
+};
+const RISK_META = {
+  "^VIX": { flag: "⚡", color: "#8B5CF6" }, // global risk gauge, not tied to one country
+  "^TNX": { flag: "📈", color: COUNTRY.US.color }, // explicitly a US Treasury yield
+  "DX-Y.NYB": { flag: "💵", color: COUNTRY.US.color }, // explicitly the US Dollar Index
+};
+const COMMODITY_META = {
+  "GC=F": { flag: "🥇", color: "#E8B923" },
+  "SI=F": { flag: "🥈", color: "#C7CDD6" },
+  "BZ=F": { flag: "🛢️", color: "#8B5E34" },
+  "PL=F": { flag: "⚪", color: "#A9C4D4" },
+  "HG=F": { flag: "🔶", color: "#C87137" },
+  "NG=F": { flag: "🔥", color: "#60A5FA" },
+};
+const CRYPTO_META = {
+  "BTC-USD": { flag: "🟠", color: "#F7931A" },
+  "ETH-USD": { flag: "🔷", color: "#627EEA" },
+};
+
+// Plain, neutral number card — used everywhere, colour lives on the panel/strip
+// wrapping it instead, never on the tile itself.
+function tile(label, value, changePct) {
+  const chgHtml = changePct !== undefined
+    ? `<div class="chg ${pctClass(changePct)}">${fmtPct(changePct)}</div>`
+    : "";
+  return `<div class="tile"><div class="label">${label}</div><div class="value">${value}</div>${chgHtml}</div>`;
+}
+
+// Wraps a whole single-entity section (one country/one rate group) in a coloured
+// panel — this IS the "actual background" the flag/brand colour is meant for.
+function panel(heading, innerHtml, color) {
+  const style = color
+    ? ` style="background:linear-gradient(160deg, color-mix(in srgb, ${color} 45%, var(--bg)), color-mix(in srgb, ${color} 15%, var(--bg)))"`
+    : "";
+  const headingStyle = color ? ` style="border-bottom-color:${color}"` : "";
+  return `<h2${headingStyle}>${heading}</h2><div class="panel"${style}>${innerHtml}</div>`;
+}
+
+// Full-width coloured row — used for sections that mix several different
+// countries/items in one list (Forex, Commodities, Indices, Crypto), so each
+// item still gets its own colour without being a small square.
+function strip(label, value, changePct, color) {
+  const bg = color
+    ? `background:linear-gradient(90deg, color-mix(in srgb, ${color} 55%, var(--bg)), color-mix(in srgb, ${color} 20%, var(--bg)))`
+    : "background:var(--card)";
+  const chgHtml = changePct !== undefined
+    ? `<span class="chg ${pctClass(changePct)}">${fmtPct(changePct)}</span>`
+    : "";
+  return `<div class="strip" style="${bg}">
+    <span class="strip-label">${label}</span>
+    <span class="strip-right"><span class="strip-value">${value}</span>${chgHtml}</span>
+  </div>`;
+}
+
+// priceFmt can be a single formatter function shared by every item, or a
+// { symbol: formatter } map when items in the same list use different units.
+function renderStripList(elId, items, priceFmt, metaFn, priceFmtMap) {
+  document.getElementById(elId).innerHTML = items
+    .map((it) => {
+      const meta = metaFn ? metaFn(it) : null;
+      const icon = metaIcon(meta);
+      const label = icon ? `${icon} ${it.name}` : it.name;
+      const fmt = priceFmtMap ? priceFmtMap[it.symbol] : priceFmt;
+      return strip(label, fmt(it.price), it.changePct, meta?.color);
+    })
+    .join("");
+}
+
+function renderRegion(region, meta) {
+  const tiles = [];
+  if (region.inflation) {
+    // South Africa: monthly SARB series gives latest/quarter/YTD detail.
+    tiles.push(tile(`Inflation - Latest month`, pctStr(region.inflation.latestPct)));
+    tiles.push(tile(`Inflation - Q${region.inflation.quarterNum}`, pctStr(region.inflation.quarterAvgPct)));
+    tiles.push(tile(`Inflation - YTD`, pctStr(region.inflation.ytdAvgPct)));
+  } else {
+    tiles.push(tile(`Inflation (${region.inflationYear ?? "—"})`, pctStr(region.inflationPct)));
+  }
+  tiles.push(tile(`GDP growth (${region.gdpGrowthYear ?? "—"})`, pctStr(region.gdpGrowthPct)));
+  if (region.unemploymentPct !== undefined) {
+    tiles.push(tile(`Unemployment (${region.unemploymentYear ?? "—"})`, pctStr(region.unemploymentPct)));
+  }
+  if (region.ppi) {
+    tiles.push(tile(`PPI - Latest month`, pctStr(region.ppi.latestPct)));
+  }
+  const heading = metaIcon(meta) ? `${metaIcon(meta)} ${region.label}` : region.label;
+  return panel(heading, `<div class="grid">${tiles.join("")}</div>`, meta?.color);
+}
+
+function renderWatchlistTable(group, meta) {
+  const showZAR = group.priceUnits === "units";
+  const priceFmt = group.priceUnits === "cents" ? fmtZARc : (p) => fmtUSD(p);
+  const rows = group.symbols.map((s) => `
+    <tr>
+      <td>${s.symbol}<br><span style="color:var(--muted);font-size:0.7rem">${s.name}</span></td>
+      <td>${priceFmt(s.price)}</td>
+      ${showZAR ? `<td>${fmtZARc(s.priceZAR)}</td>` : ""}
+      <td class="${pctClass(s.changePct)}">${fmtPct(s.changePct)}</td>
+    </tr>`).join("");
+
+  const heading = metaIcon(meta) ? `${metaIcon(meta)} ${group.label}` : group.label;
+  const table = `
+    <div class="account-table">
+      <table>
+        <thead><tr>
+          <th>Symbol</th><th>Price</th>${showZAR ? "<th>Price (ZAR)</th>" : ""}<th>Chg% (1D)</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  return panel(heading, table, meta?.color);
+}
+
+async function load() {
+  try {
+    const res = await fetch(`data.json?ts=${Date.now()}`, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const d = await res.json();
+    render(d);
+  } catch (err) {
+    document.getElementById("meta").textContent = "Failed to load data: " + err.message;
+  }
+}
+
+function render(d) {
+  const generated = new Date(d.generatedAt);
+  const ageMin = Math.round((Date.now() - generated.getTime()) / 60000);
+  document.getElementById("meta").textContent =
+    `Data as of ${generated.toLocaleString("en-ZA", { timeZone: "Africa/Johannesburg" })} SAST (${ageMin} min ago)`;
+
+  const warn = document.getElementById("warning");
+  const allSymbols = [
+    ...d.commodities, ...d.indices, ...d.crypto, ...d.riskIndicators,
+    ...Object.values(d.watchlist).flatMap((g) => g.symbols),
+  ];
+  const anyMissing = allSymbols.some((s) => s.price == null);
+  if (anyMissing) {
+    warn.style.display = "block";
+    warn.textContent = "⚠ Some quotes failed to fetch last run — a few prices below may be missing.";
+  } else {
+    warn.style.display = "none";
+  }
+
+  document.getElementById("forex").innerHTML = d.forex
+    ? Object.keys(d.forex).filter((k) => k !== "asOf")
+        .map((c) => {
+          const meta = FOREX_META[c];
+          const label = meta ? `${metaIcon(meta)} ${c}` : c;
+          return strip(label, "R" + fmtNum(d.forex[c], c === "JPY" ? 4 : 2), undefined, meta?.color);
+        }).join("")
+    : "<div class='tile'>Forex unavailable</div>";
+
+  renderStripList("commodities", d.commodities, (p) => fmtUSD(p), (it) => COMMODITY_META[it.symbol]);
+  renderStripList("indices", d.indices, (p) => fmtNum(p, 2), (it) => INDEX_META[it.symbol]);
+  renderStripList("crypto", d.crypto, (p) => fmtUSD(p, 0), (it) => CRYPTO_META[it.symbol]);
+
+  const riskFmt = { "^VIX": (p) => fmtNum(p, 2), "^TNX": (p) => pctStr(p), "DX-Y.NYB": (p) => fmtNum(p, 2) };
+  renderStripList("risk", d.riskIndicators, null, (it) => RISK_META[it.symbol], riskFmt);
+
+  document.getElementById("rates-wrap").innerHTML = panel(
+    `${FLAG_SVG.ZA} SA Policy Rates`,
+    `<div class="grid">${[
+      tile("Prime rate", pctStr(d.rates.primeRate)),
+      tile("Repo rate", pctStr(d.rates.repoRate)),
+      tile("JIBAR 3M", pctStr(d.rates.jibar3m)),
+      tile("10Y Bond Yield", pctStr(d.rates.bond10y)),
+    ].join("")}</div>`,
+    COUNTRY.ZA.color
+  );
+  document.getElementById("rates-note").innerHTML = d.rates.source === "config fallback"
+    ? `<div style="color:var(--muted);font-size:0.72rem;margin:2px 0 0">Live SARB fetch failed last run — showing fallback config values.</div>`
+    : "";
+
+  document.getElementById("macro-sections").innerHTML = Object.entries(d.regions)
+    .map(([key, region]) => renderRegion(region, COUNTRY[REGION_COUNTRY[key]]))
+    .join("");
+
+  document.getElementById("watchlist-sections").innerHTML = Object.entries(d.watchlist)
+    .map(([key, group]) => renderWatchlistTable(group, COUNTRY[WATCHLIST_COUNTRY[key]]))
+    .join("");
+}
+
+load();
+setInterval(load, 5 * 60 * 1000); // re-check every 5 min; server data updates ~every 30 min
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js"));
+}
+</script>
+</body>
+</html>

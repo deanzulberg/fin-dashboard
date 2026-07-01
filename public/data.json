@@ -1,0 +1,311 @@
+{
+  "generatedAt": "2026-07-01T20:13:00.642Z",
+  "forex": {
+    "asOf": "Wed, 01 Jul 2026 00:02:31 +0000",
+    "USD": 16.384302,
+    "EUR": 18.69027015064646,
+    "GBP": 21.704253208087547,
+    "CNY": 2.4106966216881305
+  },
+  "commodities": [
+    {
+      "symbol": "GC=F",
+      "name": "Gold",
+      "price": 4049.6,
+      "changePct": -0.71
+    },
+    {
+      "symbol": "SI=F",
+      "name": "Silver",
+      "price": 59.72,
+      "changePct": 0.85
+    },
+    {
+      "symbol": "BZ=F",
+      "name": "Brent Crude",
+      "price": 71.14,
+      "changePct": -1.18
+    },
+    {
+      "symbol": "PL=F",
+      "name": "Platinum",
+      "price": 1586.8,
+      "changePct": -2.7
+    },
+    {
+      "symbol": "HG=F",
+      "name": "Copper",
+      "price": 6.16,
+      "changePct": 0.33
+    },
+    {
+      "symbol": "NG=F",
+      "name": "Natural Gas",
+      "price": 3.2,
+      "changePct": -0.84
+    }
+  ],
+  "indices": [
+    {
+      "symbol": "^J200.JO",
+      "name": "JSE Top 40",
+      "price": 101276.41,
+      "changePct": -1.31
+    },
+    {
+      "symbol": "^J203.JO",
+      "name": "JSE All Share",
+      "price": 109613.16,
+      "changePct": -1.16
+    },
+    {
+      "symbol": "^GSPC",
+      "name": "S&P 500",
+      "price": 7483.23,
+      "changePct": 1.7
+    },
+    {
+      "symbol": "^IXIC",
+      "name": "Nasdaq Composite",
+      "price": 26040.03,
+      "changePct": 2.21
+    },
+    {
+      "symbol": "^DJI",
+      "name": "Dow Jones",
+      "price": 52305.24,
+      "changePct": 0.88
+    },
+    {
+      "symbol": "^FTSE",
+      "name": "FTSE 100",
+      "price": 10478.34,
+      "changePct": 0.16
+    }
+  ],
+  "crypto": [
+    {
+      "symbol": "BTC-USD",
+      "name": "Bitcoin",
+      "price": 59862.78,
+      "changePct": -0.13
+    },
+    {
+      "symbol": "ETH-USD",
+      "name": "Ethereum",
+      "price": 1610.4,
+      "changePct": 2.47
+    }
+  ],
+  "riskIndicators": [
+    {
+      "symbol": "^VIX",
+      "name": "VIX (volatility)",
+      "price": 16.45,
+      "changePct": -12.92
+    },
+    {
+      "symbol": "^TNX",
+      "name": "US 10Y Treasury yield",
+      "price": 4.47,
+      "changePct": 1.89
+    },
+    {
+      "symbol": "DX-Y.NYB",
+      "name": "US Dollar Index",
+      "price": 101.4,
+      "changePct": 0.04
+    }
+  ],
+  "regions": {
+    "sa": {
+      "label": "South Africa",
+      "gdpGrowthPct": 1.11,
+      "gdpGrowthYear": "last year",
+      "unemploymentPct": 32.39,
+      "unemploymentYear": "last year",
+      "inflation": {
+        "latestPct": 4.5,
+        "quarterAvgPct": 4.25,
+        "quarterNum": 2,
+        "ytdAvgPct": 3.62,
+        "yearLabel": "this year"
+      },
+      "ppi": {
+        "latestPct": 7.81,
+        "quarterAvgPct": 6.29,
+        "quarterNum": 2,
+        "ytdAvgPct": 3.76,
+        "yearLabel": "this year"
+      }
+    },
+    "us": {
+      "label": "United States",
+      "inflationPct": 2.95,
+      "inflationYear": "2024",
+      "gdpGrowthPct": 2.16,
+      "gdpGrowthYear": "last year",
+      "unemploymentPct": 4.2,
+      "unemploymentYear": "last year"
+    },
+    "uk": {
+      "label": "United Kingdom",
+      "inflationPct": 3.88,
+      "inflationYear": "last year",
+      "gdpGrowthPct": 1.39,
+      "gdpGrowthYear": "last year",
+      "unemploymentPct": 4.75,
+      "unemploymentYear": "last year"
+    },
+    "global": {
+      "label": "Global",
+      "gdpGrowthPct": 3.1,
+      "gdpGrowthYear": "this year",
+      "inflationPct": 4.4,
+      "inflationYear": "this year"
+    }
+  },
+  "rates": {
+    "primeRate": 10.5,
+    "repoRate": 7,
+    "jibar3m": 6.99,
+    "bond10y": 8.53,
+    "asOf": "2026-07-01",
+    "source": "SARB live"
+  },
+  "watchlist": {
+    "jse": {
+      "label": "JSE",
+      "priceUnits": "cents",
+      "symbols": [
+        {
+          "symbol": "AGL.JO",
+          "name": "Anglo American",
+          "price": 798.2,
+          "changePct": -0.77,
+          "priceZAR": null
+        },
+        {
+          "symbol": "ANG.JO",
+          "name": "AngloGold Ashanti",
+          "price": 1338.92,
+          "changePct": 1.39,
+          "priceZAR": null
+        },
+        {
+          "symbol": "CPI.JO",
+          "name": "Capitec",
+          "price": 4729.06,
+          "changePct": 0.75,
+          "priceZAR": null
+        },
+        {
+          "symbol": "CLS.JO",
+          "name": "Clicks Group",
+          "price": 231.85,
+          "changePct": 2.3,
+          "priceZAR": null
+        },
+        {
+          "symbol": "DSY.JO",
+          "name": "Discovery",
+          "price": 260.75,
+          "changePct": -7.58,
+          "priceZAR": null
+        },
+        {
+          "symbol": "OUT.JO",
+          "name": "Outsurance Group",
+          "price": 78.1,
+          "changePct": 0.98,
+          "priceZAR": null
+        },
+        {
+          "symbol": "PPH.JO",
+          "name": "Pepkor Holdings",
+          "price": 21.73,
+          "changePct": -1.98,
+          "priceZAR": null
+        },
+        {
+          "symbol": "SHP.JO",
+          "name": "Shoprite Holdings",
+          "price": 287.36,
+          "changePct": -3.23,
+          "priceZAR": null
+        },
+        {
+          "symbol": "SBK.JO",
+          "name": "Standard Bank Group",
+          "price": 314.3,
+          "changePct": -4.03,
+          "priceZAR": null
+        }
+      ]
+    },
+    "tfsa": {
+      "label": "TFSA",
+      "priceUnits": "cents",
+      "symbols": [
+        {
+          "symbol": "STX40.JO",
+          "name": "Satrix 40 ETF",
+          "price": 102.85,
+          "changePct": -1.12,
+          "priceZAR": null
+        }
+      ]
+    },
+    "us": {
+      "label": "US",
+      "priceUnits": "units",
+      "symbols": [
+        {
+          "symbol": "CVX",
+          "name": "Chevron",
+          "price": 165.7,
+          "changePct": -3.35,
+          "priceZAR": 2714.88
+        },
+        {
+          "symbol": "INTC",
+          "name": "Intel",
+          "price": 127.02,
+          "changePct": -3.52,
+          "priceZAR": 2081.13
+        },
+        {
+          "symbol": "JPM",
+          "name": "JPMorgan Chase",
+          "price": 334.08,
+          "changePct": 0.19,
+          "priceZAR": 5473.59
+        },
+        {
+          "symbol": "TSLA",
+          "name": "Tesla",
+          "price": 425.3,
+          "changePct": 13.25,
+          "priceZAR": 6968.24
+        },
+        {
+          "symbol": "WMT",
+          "name": "Walmart",
+          "price": 108.82,
+          "changePct": -8.55,
+          "priceZAR": 1782.94
+        }
+      ]
+    }
+  },
+  "widget": {
+    "generatedAt": "2026-07-01T20:13:00.642Z",
+    "usdZar": 16.38,
+    "jseTop40": 101276.41,
+    "jseTop40ChangePct": -1.31,
+    "spx500ChangePct": 1.7,
+    "saRepoRate": 7,
+    "saInflationLatestPct": 4.5,
+    "btcUsd": 59862.78
+  }
+}
