@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-01T20:13:00.642Z",
+  "generatedAt": "2026-07-01T22:46:19.247Z",
   "forex": {
     "asOf": "Wed, 01 Jul 2026 00:02:31 +0000",
     "USD": 16.384302,
@@ -11,38 +11,38 @@
     {
       "symbol": "GC=F",
       "name": "Gold",
-      "price": 4049.6,
-      "changePct": -0.71
+      "price": 4051.9,
+      "changePct": -0.66
     },
     {
       "symbol": "SI=F",
       "name": "Silver",
-      "price": 59.72,
-      "changePct": 0.85
+      "price": 59.81,
+      "changePct": 1
     },
     {
       "symbol": "BZ=F",
       "name": "Brent Crude",
-      "price": 71.14,
-      "changePct": -1.18
+      "price": 71.13,
+      "changePct": -1.19
     },
     {
       "symbol": "PL=F",
       "name": "Platinum",
-      "price": 1586.8,
-      "changePct": -2.7
+      "price": 1588.4,
+      "changePct": -2.61
     },
     {
       "symbol": "HG=F",
       "name": "Copper",
       "price": 6.16,
-      "changePct": 0.33
+      "changePct": 0.28
     },
     {
       "symbol": "NG=F",
       "name": "Natural Gas",
-      "price": 3.2,
-      "changePct": -0.84
+      "price": 3.21,
+      "changePct": -0.74
     }
   ],
   "indices": [
@@ -87,22 +87,22 @@
     {
       "symbol": "BTC-USD",
       "name": "Bitcoin",
-      "price": 59862.78,
-      "changePct": -0.13
+      "price": 60373.43,
+      "changePct": 0.72
     },
     {
       "symbol": "ETH-USD",
       "name": "Ethereum",
-      "price": 1610.4,
-      "changePct": 2.47
+      "price": 1621.69,
+      "changePct": 3.19
     }
   ],
   "riskIndicators": [
     {
       "symbol": "^VIX",
       "name": "VIX (volatility)",
-      "price": 16.45,
-      "changePct": -12.92
+      "price": 16.59,
+      "changePct": -12.18
     },
     {
       "symbol": "^TNX",
@@ -113,8 +113,8 @@
     {
       "symbol": "DX-Y.NYB",
       "name": "US Dollar Index",
-      "price": 101.4,
-      "changePct": 0.04
+      "price": 101.41,
+      "changePct": 0.05
     }
   ],
   "regions": {
@@ -159,10 +159,10 @@
     },
     "global": {
       "label": "Global",
-      "gdpGrowthPct": 3.1,
-      "gdpGrowthYear": "this year",
-      "inflationPct": 4.4,
-      "inflationYear": "this year"
+      "gdpGrowthPct": null,
+      "gdpGrowthYear": null,
+      "inflationPct": null,
+      "inflationYear": null
     }
   },
   "rates": {
@@ -263,9 +263,9 @@
         {
           "symbol": "CVX",
           "name": "Chevron",
-          "price": 165.7,
-          "changePct": -3.35,
-          "priceZAR": 2714.88
+          "price": 165.69,
+          "changePct": -3.36,
+          "priceZAR": 2714.71
         },
         {
           "symbol": "INTC",
@@ -277,9 +277,9 @@
         {
           "symbol": "JPM",
           "name": "JPMorgan Chase",
-          "price": 334.08,
+          "price": 334.07,
           "changePct": 0.19,
-          "priceZAR": 5473.59
+          "priceZAR": 5473.5
         },
         {
           "symbol": "TSLA",
@@ -299,13 +299,13 @@
     }
   },
   "widget": {
-    "generatedAt": "2026-07-01T20:13:00.642Z",
+    "generatedAt": "2026-07-01T22:46:19.247Z",
     "usdZar": 16.38,
     "jseTop40": 101276.41,
     "jseTop40ChangePct": -1.31,
     "spx500ChangePct": 1.7,
     "saRepoRate": 7,
     "saInflationLatestPct": 4.5,
-    "btcUsd": 59862.78
+    "btcUsd": 60373.43
   }
 }
