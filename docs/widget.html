@@ -8,121 +8,212 @@
   :root {
     --bg: #111a24;
     --bg2: #182430;
-    --card: #1d2a37;
     --text: #e9eff5;
     --muted: #92a2b5;
     --up: #3ddc84;
     --down: #ff6b6e;
-    --border: #2d3d4d;
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
   body {
     margin: 0;
     background-image:
-      radial-gradient(400px circle at 10% -10%, rgba(0, 200, 130, 0.22), transparent 60%),
-      radial-gradient(350px circle at 100% 10%, rgba(60, 120, 240, 0.20), transparent 60%),
+      radial-gradient(300px circle at 10% -10%, rgba(0, 200, 130, 0.22), transparent 60%),
+      radial-gradient(260px circle at 100% 10%, rgba(60, 120, 240, 0.20), transparent 60%),
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='80'%3E%3Cg stroke='white' stroke-opacity='0.06' fill='white' fill-opacity='0.05'%3E%3Cline x1='10' y1='6' x2='10' y2='34' stroke-width='1'/%3E%3Crect x='6' y='14' width='8' height='14'/%3E%3Cline x1='30' y1='40' x2='30' y2='76' stroke-width='1'/%3E%3Crect x='26' y='48' width='8' height='20'/%3E%3Cline x1='50' y1='2' x2='50' y2='28' stroke-width='1'/%3E%3Crect x='46' y='8' width='8' height='16'/%3E%3C/g%3E%3C/svg%3E"),
       linear-gradient(180deg, var(--bg2) 0%, var(--bg) 60%);
     background-repeat: no-repeat, no-repeat, repeat, no-repeat;
     background-size: auto, auto, 60px 80px, cover;
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    padding: 10px;
-    font-size: 14px;
+    padding: 6px;
   }
-  #meta { color: var(--muted); font-size: 0.68rem; text-align: center; margin-bottom: 8px; }
-  h2 {
-    font-size: 0.68rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--muted);
-    margin: 10px 0 5px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 3px;
+  #meta { color: var(--muted); font-size: 0.55rem; text-align: center; margin-bottom: 5px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
   }
-  h2:first-of-type { margin-top: 0; }
-  .strip-list { display: flex; flex-direction: column; gap: 5px; }
-  .strip {
+  .tile {
+    border-radius: 8px;
+    padding: 5px 7px;
+    min-width: 0;
+  }
+  .tile .label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    border-radius: 8px;
-    padding: 6px 10px;
+    gap: 3px;
   }
-  .strip-label { font-size: 0.78rem; font-weight: 600; }
-  .strip-right { display: flex; align-items: baseline; gap: 8px; }
-  .strip-value { font-size: 0.9rem; font-weight: 700; }
-  .chg { font-size: 0.72rem; font-weight: 600; min-width: 48px; text-align: right; }
+  .tile .label svg { flex: none; }
+  .tile .value { font-size: 0.88rem; font-weight: 700; margin-top: 1px; white-space: nowrap; }
+  .tile .chg { font-size: 0.62rem; font-weight: 700; margin-top: 0; }
   .up { color: var(--up); }
   .down { color: var(--down); }
   .flat { color: var(--muted); }
-  .panel {
-    border-radius: 10px;
-    padding: 8px 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .panel .label { font-size: 0.75rem; font-weight: 600; }
-  .panel .value { font-size: 0.95rem; font-weight: 700; }
 </style>
 </head>
 <body>
   <div id="meta">Loading…</div>
-
-  <h2>Forex (ZAR per unit)</h2>
-  <div class="strip-list" id="forex"></div>
-
-  <h2>Commodities (USD)</h2>
-  <div class="strip-list" id="commodities"></div>
-
-  <h2>Indices</h2>
-  <div class="strip-list" id="indices"></div>
-
-  <h2>Crypto (USD)</h2>
-  <div class="strip-list" id="crypto"></div>
-
-  <h2>SA Inflation</h2>
-  <div id="inflation"></div>
+  <div class="grid" id="grid"></div>
 
 <script>
+const fmtR = (n) => n == null ? "—" : "R" + n.toLocaleString("en-ZA", { maximumFractionDigits: 2 });
 const fmtNum = (n, dp = 2) => n == null ? "—" : n.toLocaleString("en-ZA", { maximumFractionDigits: dp });
 const fmtUSD = (n, dp = 2) => n == null ? "—" : "$" + n.toLocaleString("en-US", { maximumFractionDigits: dp });
 const fmtPct = (n) => n == null ? "—" : (n > 0 ? "+" : "") + n.toFixed(2) + "%";
 const pctStr = (n) => n == null ? "—" : n + "%";
 const pctClass = (n) => n == null ? "flat" : n > 0 ? "up" : n < 0 ? "down" : "flat";
 
-// Same real-flag SVGs and per-country/brand colours as the main dashboard, so
-// this widget reads identically at a glance.
+// Same real-flag SVGs and per-country/brand colours as the main dashboard
+// (index.html), just drawn smaller to fit compact blocks.
 const FLAG_SVG = {
-  ZA: `<svg width="18" height="13" viewBox="0 0 20 14" style="vertical-align:-2px;border-radius:2px"><rect width="20" height="14" fill="#fff"/><polygon points="0,0 20,0 20,5.2 7.5,5.2 0,1" fill="#E03C31"/><polygon points="0,14 20,14 20,8.8 7.5,8.8 0,13" fill="#001489"/><polygon points="0,1.5 7.5,5.7 7.5,8.3 0,12.5" fill="#FFB81C"/><polygon points="0,2.3 6.3,6.1 6.3,7.9 0,11.7" fill="#000"/><polygon points="7.5,5.7 20,5.7 20,8.3 7.5,8.3" fill="#007749"/></svg>`,
-  US: `<svg width="18" height="13" viewBox="0 0 20 14" style="vertical-align:-2px;border-radius:2px"><rect width="20" height="14" fill="#B22234"/><rect y="1.08" width="20" height="1.08" fill="#fff"/><rect y="3.23" width="20" height="1.08" fill="#fff"/><rect y="5.38" width="20" height="1.08" fill="#fff"/><rect y="7.54" width="20" height="1.08" fill="#fff"/><rect y="9.69" width="20" height="1.08" fill="#fff"/><rect y="11.85" width="20" height="1.08" fill="#fff"/><rect width="8" height="7.54" fill="#3C3B6E"/></svg>`,
-  GB: `<svg width="18" height="13" viewBox="0 0 20 14" style="vertical-align:-2px;border-radius:2px"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#fff" stroke-width="2.8"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.4"/><rect x="8" width="4" height="14" fill="#fff"/><rect y="5" width="20" height="4" fill="#fff"/><rect x="8.8" width="2.4" height="14" fill="#C8102E"/><rect y="5.8" width="20" height="2.4" fill="#C8102E"/></svg>`,
+  ZA: `<svg width="14" height="10" viewBox="0 0 20 14" style="border-radius:1px"><rect width="20" height="14" fill="#fff"/><polygon points="0,0 20,0 20,5.2 7.5,5.2 0,1" fill="#E03C31"/><polygon points="0,14 20,14 20,8.8 7.5,8.8 0,13" fill="#001489"/><polygon points="0,1.5 7.5,5.7 7.5,8.3 0,12.5" fill="#FFB81C"/><polygon points="0,2.3 6.3,6.1 6.3,7.9 0,11.7" fill="#000"/><polygon points="7.5,5.7 20,5.7 20,8.3 7.5,8.3" fill="#007749"/></svg>`,
+  US: `<svg width="14" height="10" viewBox="0 0 20 14" style="border-radius:1px"><rect width="20" height="14" fill="#B22234"/><rect y="1.08" width="20" height="1.08" fill="#fff"/><rect y="3.23" width="20" height="1.08" fill="#fff"/><rect y="5.38" width="20" height="1.08" fill="#fff"/><rect y="7.54" width="20" height="1.08" fill="#fff"/><rect y="9.69" width="20" height="1.08" fill="#fff"/><rect y="11.85" width="20" height="1.08" fill="#fff"/><rect width="8" height="7.54" fill="#3C3B6E"/></svg>`,
+  GB: `<svg width="14" height="10" viewBox="0 0 20 14" style="border-radius:1px"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#fff" stroke-width="2.8"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.4"/><rect x="8" width="4" height="14" fill="#fff"/><rect y="5" width="20" height="4" fill="#fff"/><rect x="8.8" width="2.4" height="14" fill="#C8102E"/><rect y="5.8" width="20" height="2.4" fill="#C8102E"/></svg>`,
+  EU: `<svg width="14" height="10" viewBox="0 0 20 14" style="border-radius:1px"><rect width="20" height="14" fill="#003399"/><circle cx="10" cy="3" r="0.9" fill="#FFCC00"/><circle cx="13.5" cy="4.2" r="0.9" fill="#FFCC00"/><circle cx="15" cy="7" r="0.9" fill="#FFCC00"/><circle cx="13.5" cy="9.8" r="0.9" fill="#FFCC00"/><circle cx="10" cy="11" r="0.9" fill="#FFCC00"/><circle cx="6.5" cy="9.8" r="0.9" fill="#FFCC00"/><circle cx="5" cy="7" r="0.9" fill="#FFCC00"/><circle cx="6.5" cy="4.2" r="0.9" fill="#FFCC00"/></svg>`,
+  CN: `<svg width="14" height="10" viewBox="0 0 20 14" style="border-radius:1px"><rect width="20" height="14" fill="#DE2910"/><circle cx="5" cy="4" r="1.8" fill="#FFDE00"/><circle cx="9.5" cy="2.2" r="0.7" fill="#FFDE00"/><circle cx="11" cy="4.3" r="0.7" fill="#FFDE00"/><circle cx="10.3" cy="6.8" r="0.7" fill="#FFDE00"/><circle cx="8" cy="7.2" r="0.7" fill="#FFDE00"/></svg>`,
 };
-const COUNTRY = { ZA: "#007A4D", US: "#B22234", GB: "#1D4ED8" };
+function icon(meta) {
+  if (!meta) return "";
+  return meta.flagCode ? (FLAG_SVG[meta.flagCode] ?? "") : (meta.flag ?? "");
+}
+
+const COUNTRY = {
+  ZA: { flagCode: "ZA", color: "#007A4D" },
+  US: { flagCode: "US", color: "#B22234" },
+  GB: { flagCode: "GB", color: "#1D4ED8" },
+};
+const EU_COLOR = "#6366F1";
+const CN_COLOR = "#F59E0B";
+
+const FOREX_META = {
+  USD: { flagCode: "US", color: COUNTRY.US.color },
+  EUR: { flagCode: "EU", color: EU_COLOR },
+  GBP: { flagCode: "GB", color: COUNTRY.GB.color },
+  CNY: { flagCode: "CN", color: CN_COLOR },
+};
+const INDEX_META = {
+  "^J200.JO": { flagCode: "ZA", color: COUNTRY.ZA.color },
+  "^J203.JO": { flagCode: "ZA", color: COUNTRY.ZA.color },
+  "^GSPC": { flagCode: "US", color: COUNTRY.US.color },
+  "^IXIC": { flagCode: "US", color: COUNTRY.US.color },
+  "^DJI": { flagCode: "US", color: COUNTRY.US.color },
+  "^FTSE": { flagCode: "GB", color: COUNTRY.GB.color },
+};
+const RISK_META = {
+  "^VIX": { flag: "⚡", color: "#8B5CF6" },
+  "^TNX": { flag: "📈", color: COUNTRY.US.color },
+  "DX-Y.NYB": { flag: "💵", color: COUNTRY.US.color },
+};
 const COMMODITY_META = {
   "GC=F": { flag: "🥇", color: "#E8B923" },
   "SI=F": { flag: "🥈", color: "#C7CDD6" },
   "BZ=F": { flag: "🛢️", color: "#8B5E34" },
+  "PL=F": { flag: "⚪", color: "#A9C4D4" },
+  "HG=F": { flag: "🔶", color: "#C87137" },
   "NG=F": { flag: "🔥", color: "#60A5FA" },
 };
+const CRYPTO_META = {
+  "BTC-USD": { flag: "🟠", color: "#F7931A" },
+  "ETH-USD": { flag: "🔷", color: "#627EEA" },
+};
 
-function strip(label, value, changePct, color) {
-  const bg = color
-    ? `background:linear-gradient(90deg, color-mix(in srgb, ${color} 55%, var(--bg)), color-mix(in srgb, ${color} 20%, var(--bg)))`
-    : "background:var(--card)";
+function tile(iconHtml, label, value, changePct, color) {
+  const bg = `background:linear-gradient(160deg, color-mix(in srgb, ${color} 50%, var(--bg)), color-mix(in srgb, ${color} 18%, var(--bg)))`;
   const chgHtml = changePct !== undefined
-    ? `<span class="chg ${pctClass(changePct)}">${fmtPct(changePct)}</span>`
+    ? `<div class="chg ${pctClass(changePct)}">${fmtPct(changePct)}</div>`
     : "";
-  return `<div class="strip" style="${bg}">
-    <span class="strip-label">${label}</span>
-    <span class="strip-right"><span class="strip-value">${value}</span>${chgHtml}</span>
+  return `<div class="tile" style="${bg}">
+    <div class="label">${iconHtml} ${label}</div>
+    <div class="value">${value}</div>
+    ${chgHtml}
   </div>`;
 }
 
 function findBy(list, symbol) { return (list || []).find((x) => x.symbol === symbol); }
+
+// Which section to show is picked via ?section=... in the URL, so the same
+// page can power several separate home-screen widgets, each pointed at a
+// different section. No param (or an unknown value) falls back to "headlines".
+const SECTION = new URLSearchParams(location.search).get("section") || "headlines";
+
+const RENDERERS = {
+  forex(d) {
+    return Object.keys(d.forex || {}).filter((c) => c !== "asOf").map((c) => {
+      const meta = FOREX_META[c];
+      return tile(icon(meta), c, fmtR(d.forex[c]), undefined, meta?.color ?? "#555");
+    });
+  },
+  commodities(d) {
+    return (d.commodities || []).map((it) => {
+      const meta = COMMODITY_META[it.symbol];
+      return tile(icon(meta), it.name, fmtUSD(it.price), it.changePct, meta?.color ?? "#555");
+    });
+  },
+  indices(d) {
+    return (d.indices || []).map((it) => {
+      const meta = INDEX_META[it.symbol];
+      return tile(icon(meta), it.name, fmtNum(it.price, 0), it.changePct, meta?.color ?? "#555");
+    });
+  },
+  crypto(d) {
+    return (d.crypto || []).map((it) => {
+      const meta = CRYPTO_META[it.symbol];
+      return tile(icon(meta), it.name, fmtUSD(it.price, 0), it.changePct, meta?.color ?? "#555");
+    });
+  },
+  risk(d) {
+    return (d.riskIndicators || []).map((it) => {
+      const meta = RISK_META[it.symbol];
+      return tile(icon(meta), it.name, fmtNum(it.price, 2), it.changePct, meta?.color ?? "#555");
+    });
+  },
+  rates(d) {
+    const r = d.rates || {};
+    return [
+      tile(icon(COUNTRY.ZA), "Prime rate", pctStr(r.primeRate), undefined, COUNTRY.ZA.color),
+      tile(icon(COUNTRY.ZA), "Repo rate", pctStr(r.repoRate), undefined, COUNTRY.ZA.color),
+      tile(icon(COUNTRY.ZA), "JIBAR 3M", pctStr(r.jibar3m), undefined, COUNTRY.ZA.color),
+      tile(icon(COUNTRY.ZA), "10Y Bond", pctStr(r.bond10y), undefined, COUNTRY.ZA.color),
+    ];
+  },
+  inflation(d) {
+    const inf = d.regions?.sa?.inflation;
+    if (!inf) return [tile(icon(COUNTRY.ZA), "SA Inflation", "—", undefined, COUNTRY.ZA.color)];
+    return [
+      tile(icon(COUNTRY.ZA), "Latest month", pctStr(inf.latestPct), undefined, COUNTRY.ZA.color),
+      tile(icon(COUNTRY.ZA), `Q${inf.quarterNum} average`, pctStr(inf.quarterAvgPct), undefined, COUNTRY.ZA.color),
+      tile(icon(COUNTRY.ZA), "YTD average", pctStr(inf.ytdAvgPct), undefined, COUNTRY.ZA.color),
+    ];
+  },
+  headlines(d) {
+    const jseAllShare = findBy(d.indices, "^J203.JO");
+    const spx500 = findBy(d.indices, "^GSPC");
+    const gold = findBy(d.commodities, "GC=F");
+    const silver = findBy(d.commodities, "SI=F");
+    const brent = findBy(d.commodities, "BZ=F");
+    const natGas = findBy(d.commodities, "NG=F");
+    const btc = findBy(d.crypto, "BTC-USD");
+    const inf = d.regions?.sa?.inflation;
+    return [
+      tile(icon(FOREX_META.USD), "USD", fmtR(d.forex?.USD), undefined, FOREX_META.USD.color),
+      tile(icon(FOREX_META.GBP), "GBP", fmtR(d.forex?.GBP), undefined, FOREX_META.GBP.color),
+      tile(icon(COMMODITY_META["GC=F"]), "Gold", fmtUSD(gold?.price), gold?.changePct, COMMODITY_META["GC=F"].color),
+      tile(icon(COMMODITY_META["SI=F"]), "Silver", fmtUSD(silver?.price), silver?.changePct, COMMODITY_META["SI=F"].color),
+      tile(icon(COMMODITY_META["BZ=F"]), "Brent", fmtUSD(brent?.price), brent?.changePct, COMMODITY_META["BZ=F"].color),
+      tile(icon(COMMODITY_META["NG=F"]), "Nat Gas", fmtUSD(natGas?.price), natGas?.changePct, COMMODITY_META["NG=F"].color),
+      tile(icon(COUNTRY.ZA), "JSE All Sh.", fmtNum(jseAllShare?.price, 0), jseAllShare?.changePct, COUNTRY.ZA.color),
+      tile(icon(COUNTRY.US), "S&amp;P 500", fmtNum(spx500?.price, 0), spx500?.changePct, COUNTRY.US.color),
+      tile(icon(CRYPTO_META["BTC-USD"]), "BTC", fmtUSD(btc?.price, 0), btc?.changePct, CRYPTO_META["BTC-USD"].color),
+      tile(icon(COUNTRY.ZA), `Infl. Q${inf?.quarterNum ?? "—"}`, pctStr(inf?.quarterAvgPct), undefined, COUNTRY.ZA.color),
+    ];
+  },
+};
 
 async function load() {
   try {
@@ -141,36 +232,8 @@ function render(d) {
   document.getElementById("meta").textContent =
     `${generated.toLocaleTimeString("en-ZA", { timeZone: "Africa/Johannesburg", hour: "2-digit", minute: "2-digit" })} SAST (${ageMin}m ago)`;
 
-  document.getElementById("forex").innerHTML = [
-    strip(`${FLAG_SVG.US} USD`, "R" + fmtNum(d.forex?.USD), undefined, COUNTRY.US),
-    strip(`${FLAG_SVG.GB} GBP`, "R" + fmtNum(d.forex?.GBP), undefined, COUNTRY.GB),
-  ].join("");
-
-  const commodities = ["GC=F", "SI=F", "BZ=F", "NG=F"].map((sym) => {
-    const it = findBy(d.commodities, sym);
-    const meta = COMMODITY_META[sym];
-    return strip(`${meta.flag} ${it?.name ?? sym}`, fmtUSD(it?.price), it?.changePct, meta.color);
-  });
-  document.getElementById("commodities").innerHTML = commodities.join("");
-
-  const jseAllShare = findBy(d.indices, "^J203.JO");
-  const spx500 = findBy(d.indices, "^GSPC");
-  document.getElementById("indices").innerHTML = [
-    strip(`${FLAG_SVG.ZA} ${jseAllShare?.name ?? "JSE All Share"}`, fmtNum(jseAllShare?.price, 2), jseAllShare?.changePct, COUNTRY.ZA),
-    strip(`${FLAG_SVG.US} ${spx500?.name ?? "S&P 500"}`, fmtNum(spx500?.price, 2), spx500?.changePct, COUNTRY.US),
-  ].join("");
-
-  const btc = findBy(d.crypto, "BTC-USD");
-  document.getElementById("crypto").innerHTML =
-    strip(`🟠 ${btc?.name ?? "Bitcoin"}`, fmtUSD(btc?.price, 0), btc?.changePct, "#F7931A");
-
-  const inflation = d.regions?.sa?.inflation;
-  const label = inflation ? `Q${inflation.quarterNum} average` : "Quarter average";
-  document.getElementById("inflation").innerHTML =
-    `<div class="panel" style="background:linear-gradient(90deg, color-mix(in srgb, ${COUNTRY.ZA} 45%, var(--bg)), color-mix(in srgb, ${COUNTRY.ZA} 15%, var(--bg)))">
-      <span class="label">${FLAG_SVG.ZA} ${label}</span>
-      <span class="value">${pctStr(inflation?.quarterAvgPct)}</span>
-    </div>`;
+  const renderer = RENDERERS[SECTION] || RENDERERS.headlines;
+  document.getElementById("grid").innerHTML = renderer(d).join("");
 }
 
 load();
