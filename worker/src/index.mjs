@@ -1,8 +1,8 @@
 // Cloudflare Worker entry point: runs on a Cron Trigger (see wrangler.toml),
 // builds the same data.json as scripts/fetch-data.mjs (shared logic in
 // scripts/lib/build-data.mjs), and commits the result straight to GitHub via
-// the REST API — so Cloudflare Pages picks it up and redeploys automatically,
-// with no GitHub Actions involved at all.
+// the REST API — GitHub Pages then serves it directly from the repo, with no
+// GitHub Actions involved at all.
 
 import metrics from "../../config/metrics.json";
 import watchlist from "../../config/watchlist.json";
@@ -11,7 +11,7 @@ import { buildData } from "../../scripts/lib/build-data.mjs";
 
 const REPO = "deanzulberg/fin-dashboard";
 const BRANCH = "master";
-const FILE_PATH = "public/data.json";
+const FILE_PATH = "docs/data.json";
 
 function toBase64Utf8(str) {
   const bytes = new TextEncoder().encode(str);

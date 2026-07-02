@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Node entry point: reads config from disk, builds the data, writes public/data.json.
+// Node entry point: reads config from disk, builds the data, writes docs/data.json.
 // Run locally with `node scripts/fetch-data.mjs`. The Cloudflare Worker
 // (worker/src/index.mjs) uses the same buildData() but a different entry point,
 // since Workers have no filesystem.
@@ -19,7 +19,7 @@ async function main() {
 
   const data = await buildData({ metrics, watchlist, ratesFallback });
 
-  const outPath = path.join(ROOT, "public/data.json");
+  const outPath = path.join(ROOT, "docs/data.json");
   await writeFile(outPath, JSON.stringify(data, null, 2));
   console.log(`Wrote ${outPath}`);
 }
