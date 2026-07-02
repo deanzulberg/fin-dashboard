@@ -163,40 +163,28 @@ blocked by this account's Actions budget setting).
 without opening an app) cannot be created from a website or PWA.** That's an Android platform
 limitation — widgets are backed by a native `AppWidgetProvider`, which only a compiled
 native/Kotlin app can register. The workaround is a third-party "webpage as widget" app —
-**WebsiteWidget** — which screenshots/renders a URL into a home-screen tile on a timer.
-`docs/widget.html` is built for exactly this: a compact 2-column tile layout (instead of the
-full scrolling dashboard) that reuses the main dashboard's colours, flags, and styling.
+**WebsiteWidget** — which renders a URL into a home-screen tile on a timer.
 
-**WebsiteWidget setup:**
-1. Install **WebsiteWidget** from the Play Store.
-2. Long-press your home screen → **Widgets → WebsiteWidget** → drop it anywhere, then resize to
-   roughly a 2×2 or 2×3 footprint (the tile layout is designed for that shape).
-3. Point it at: `https://deanzulberg.github.io/fin-dashboard/widget.html`
-4. Set the refresh interval to **~30 min**, matching how often the Worker updates `data.json` —
-   refreshing more often just reloads the same data.
+**Two options, depending on the device:**
 
-**Multiple widgets for different sections:** `widget.html` reads a `?section=` query parameter,
-so you can add several WebsiteWidget instances, each pinned to a different part of the market
-picture instead of one page trying to show everything. Supported values:
+1. **Compact widget (phone home screen)** — `docs/widget.html`: 6 headline figures (USD, GBP,
+   Gold, JSE All Share, S&P 500, BTC) as large, clearly-readable blocks, sized for a 3×2 widget
+   footprint.
+   1. Install **WebsiteWidget** from the Play Store.
+   2. Long-press your home screen → **Widgets → WebsiteWidget** → drop it, then resize to
+      roughly **3 wide × 2 tall**.
+   3. Point it at: `https://deanzulberg.github.io/fin-dashboard/widget.html`
+   4. Refresh interval: **~30 min** (matches how often the Worker updates `data.json`).
 
-| `?section=` value | Shows |
-|---|---|
-| `forex` | USD/EUR/GBP/CNY vs ZAR |
-| `commodities` | Gold, silver, Brent crude, platinum, copper, natural gas |
-| `indices` | JSE Top 40/All Share, S&P 500, Nasdaq, Dow, FTSE |
-| `crypto` | BTC, ETH |
-| `risk` | VIX, US 10Y yield, US Dollar Index |
-| `rates` | SA prime/repo rate, JIBAR 3M, 10Y bond |
-| `inflation` | SA CPI — latest month, quarter average, YTD average |
-| `headlines` | Curated mix: USD/GBP, gold/silver/Brent/nat gas, JSE All Share, S&P 500, BTC, SA inflation (default if `?section=` is omitted or unrecognised) |
+2. **Everything, full page (tablet)** — just point a WebsiteWidget instance sized to fill the
+   whole screen at the **main dashboard URL** itself:
+   `https://deanzulberg.github.io/fin-dashboard/` — it already shows every value in the app
+   (forex, commodities, indices, crypto, risk & rates, macro regions, watchlist), already styled,
+   with no cropping needed once the widget covers the full display.
 
-Example: `https://deanzulberg.github.io/fin-dashboard/widget.html?section=crypto` for a
-BTC/ETH-only widget.
-
-> **Deprecated:** an earlier version of this README documented a KWGT (Kustom Widget Maker) setup
-> that polled the flattened `widget` object in `data.json` directly and required manually wiring
-> up JSON-path text modules per field. `widget.html` replaces that — it's simpler to set up (one
-> URL, no per-field formulas) and already styled, so KWGT is no longer the recommended approach.
+> **Deprecated:** earlier versions of this README documented a KWGT (Kustom Widget Maker) setup
+> and, briefly, several separate per-section widgets (`widget.html?section=...`). Both are
+> replaced by the two options above — simpler to set up, and no per-field formula wiring.
 
 ## Local testing / manual trigger
 
