@@ -1,48 +1,48 @@
 {
-  "generatedAt": "2026-07-01T22:46:19.247Z",
+  "generatedAt": "2026-07-02T07:10:33.731Z",
   "forex": {
-    "asOf": "Wed, 01 Jul 2026 00:02:31 +0000",
-    "USD": 16.384302,
-    "EUR": 18.69027015064646,
-    "GBP": 21.704253208087547,
-    "CNY": 2.4106966216881305
+    "asOf": "Thu, 02 Jul 2026 00:02:31 +0000",
+    "USD": 16.411682,
+    "EUR": 18.685076582746138,
+    "GBP": 21.773837985283933,
+    "CNY": 2.413108615223464
   },
   "commodities": [
     {
       "symbol": "GC=F",
       "name": "Gold",
-      "price": 4051.9,
-      "changePct": -0.66
+      "price": 4083.7,
+      "changePct": 1.53
     },
     {
       "symbol": "SI=F",
       "name": "Silver",
-      "price": 59.81,
-      "changePct": 1
+      "price": 60.3,
+      "changePct": 3.65
     },
     {
       "symbol": "BZ=F",
       "name": "Brent Crude",
-      "price": 71.13,
-      "changePct": -1.19
+      "price": 70.56,
+      "changePct": -3.54
     },
     {
       "symbol": "PL=F",
       "name": "Platinum",
-      "price": 1588.4,
-      "changePct": -2.61
+      "price": 1622.2,
+      "changePct": 3.03
     },
     {
       "symbol": "HG=F",
       "name": "Copper",
-      "price": 6.16,
-      "changePct": 0.28
+      "price": 6.14,
+      "changePct": 0.72
     },
     {
       "symbol": "NG=F",
       "name": "Natural Gas",
-      "price": 3.21,
-      "changePct": -0.74
+      "price": 3.18,
+      "changePct": 0.03
     }
   ],
   "indices": [
@@ -50,13 +50,13 @@
       "symbol": "^J200.JO",
       "name": "JSE Top 40",
       "price": 101276.41,
-      "changePct": -1.31
+      "changePct": -0.61
     },
     {
       "symbol": "^J203.JO",
       "name": "JSE All Share",
       "price": 109613.16,
-      "changePct": -1.16
+      "changePct": -0.56
     },
     {
       "symbol": "^GSPC",
@@ -80,21 +80,21 @@
       "symbol": "^FTSE",
       "name": "FTSE 100",
       "price": 10478.34,
-      "changePct": 0.16
+      "changePct": -0.49
     }
   ],
   "crypto": [
     {
       "symbol": "BTC-USD",
       "name": "Bitcoin",
-      "price": 60373.43,
-      "changePct": 0.72
+      "price": 60184.93,
+      "changePct": 1.1
     },
     {
       "symbol": "ETH-USD",
       "name": "Ethereum",
-      "price": 1621.69,
-      "changePct": 3.19
+      "price": 1617.19,
+      "changePct": 2.98
     }
   ],
   "riskIndicators": [
@@ -102,7 +102,7 @@
       "symbol": "^VIX",
       "name": "VIX (volatility)",
       "price": 16.59,
-      "changePct": -12.18
+      "changePct": -9.89
     },
     {
       "symbol": "^TNX",
@@ -113,8 +113,8 @@
     {
       "symbol": "DX-Y.NYB",
       "name": "US Dollar Index",
-      "price": 101.41,
-      "changePct": 0.05
+      "price": 101.22,
+      "changePct": 0.11
     }
   ],
   "regions": {
@@ -159,10 +159,10 @@
     },
     "global": {
       "label": "Global",
-      "gdpGrowthPct": null,
-      "gdpGrowthYear": null,
-      "inflationPct": null,
-      "inflationYear": null
+      "gdpGrowthPct": 3.1,
+      "gdpGrowthYear": "this year",
+      "inflationPct": 4.4,
+      "inflationYear": "this year"
     }
   },
   "rates": {
@@ -170,7 +170,7 @@
     "repoRate": 7,
     "jibar3m": 6.99,
     "bond10y": 8.53,
-    "asOf": "2026-07-01",
+    "asOf": "2026-07-02",
     "source": "SARB live"
   },
   "watchlist": {
@@ -182,63 +182,63 @@
           "symbol": "AGL.JO",
           "name": "Anglo American",
           "price": 798.2,
-          "changePct": -0.77,
+          "changePct": 0.02,
           "priceZAR": null
         },
         {
           "symbol": "ANG.JO",
           "name": "AngloGold Ashanti",
           "price": 1338.92,
-          "changePct": 1.39,
+          "changePct": -0.2,
           "priceZAR": null
         },
         {
           "symbol": "CPI.JO",
           "name": "Capitec",
           "price": 4729.06,
-          "changePct": 0.75,
+          "changePct": 1.15,
           "priceZAR": null
         },
         {
           "symbol": "CLS.JO",
           "name": "Clicks Group",
           "price": 231.85,
-          "changePct": 2.3,
+          "changePct": 4.91,
           "priceZAR": null
         },
         {
           "symbol": "DSY.JO",
           "name": "Discovery",
           "price": 260.75,
-          "changePct": -7.58,
+          "changePct": -7.21,
           "priceZAR": null
         },
         {
           "symbol": "OUT.JO",
           "name": "Outsurance Group",
           "price": 78.1,
-          "changePct": 0.98,
+          "changePct": 2.51,
           "priceZAR": null
         },
         {
           "symbol": "PPH.JO",
           "name": "Pepkor Holdings",
           "price": 21.73,
-          "changePct": -1.98,
+          "changePct": -0.78,
           "priceZAR": null
         },
         {
           "symbol": "SHP.JO",
           "name": "Shoprite Holdings",
           "price": 287.36,
-          "changePct": -3.23,
+          "changePct": -2.25,
           "priceZAR": null
         },
         {
           "symbol": "SBK.JO",
           "name": "Standard Bank Group",
           "price": 314.3,
-          "changePct": -4.03,
+          "changePct": -1.19,
           "priceZAR": null
         }
       ]
@@ -251,7 +251,7 @@
           "symbol": "STX40.JO",
           "name": "Satrix 40 ETF",
           "price": 102.85,
-          "changePct": -1.12,
+          "changePct": -0.64,
           "priceZAR": null
         }
       ]
@@ -265,47 +265,47 @@
           "name": "Chevron",
           "price": 165.69,
           "changePct": -3.36,
-          "priceZAR": 2714.71
+          "priceZAR": 2719.25
         },
         {
           "symbol": "INTC",
           "name": "Intel",
           "price": 127.02,
           "changePct": -3.52,
-          "priceZAR": 2081.13
+          "priceZAR": 2084.61
         },
         {
           "symbol": "JPM",
           "name": "JPMorgan Chase",
           "price": 334.07,
           "changePct": 0.19,
-          "priceZAR": 5473.5
+          "priceZAR": 5482.65
         },
         {
           "symbol": "TSLA",
           "name": "Tesla",
           "price": 425.3,
           "changePct": 13.25,
-          "priceZAR": 6968.24
+          "priceZAR": 6979.89
         },
         {
           "symbol": "WMT",
           "name": "Walmart",
           "price": 108.82,
           "changePct": -8.55,
-          "priceZAR": 1782.94
+          "priceZAR": 1785.92
         }
       ]
     }
   },
   "widget": {
-    "generatedAt": "2026-07-01T22:46:19.247Z",
-    "usdZar": 16.38,
+    "generatedAt": "2026-07-02T07:10:33.731Z",
+    "usdZar": 16.41,
     "jseTop40": 101276.41,
-    "jseTop40ChangePct": -1.31,
+    "jseTop40ChangePct": -0.61,
     "spx500ChangePct": 1.7,
     "saRepoRate": 7,
     "saInflationLatestPct": 4.5,
-    "btcUsd": 60373.43
+    "btcUsd": 60184.93
   }
 }

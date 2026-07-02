@@ -1,0 +1,8 @@
+name = "fin-dashboard-fetch"
+main = "src/index.mjs"
+compatibility_date = "2026-07-01"
+
+# Every 30 min, 05:00-21:30 UTC = 07:00-23:30 SAST, weekdays only.
+# Same schedule as the (now unused) GitHub Actions workflow.
+[triggers]
+crons = ["*/30 5-21 * * 1-5"]
