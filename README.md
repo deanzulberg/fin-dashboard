@@ -157,48 +157,46 @@ blocked by this account's Actions budget setting).
    banner — either works).
 3. Confirm. An icon appears on your home screen that opens the dashboard full-screen, like an app.
 
-## Home screen & widgets — what's realistic
+## Home screen widgets
 
 **A real Android home-screen widget (the kind that sits on your home screen showing live numbers
 without opening an app) cannot be created from a website or PWA.** That's an Android platform
 limitation — widgets are backed by a native `AppWidgetProvider`, which only a compiled
-native/Kotlin app can register. What's real and already built: "Add to Home screen" above, which
-gives a one-tap app-like icon.
+native/Kotlin app can register. The workaround is a third-party "webpage as widget" app —
+**WebsiteWidget** — which screenshots/renders a URL into a home-screen tile on a timer.
+`docs/widget.html` is built for exactly this: a compact 2-column tile layout (instead of the
+full scrolling dashboard) that reuses the main dashboard's colours, flags, and styling.
 
-If you want an actual glanceable tile, use a third-party widget app — **KWGT (Kustom Widget
-Maker)** (free, Play Store) is the most popular on Samsung, and can poll a URL and template
-values onto a home-screen widget you design. `data.json` has a flattened `widget` object made
-for exactly this (no nested arrays to dig through):
+**WebsiteWidget setup:**
+1. Install **WebsiteWidget** from the Play Store.
+2. Long-press your home screen → **Widgets → WebsiteWidget** → drop it anywhere, then resize to
+   roughly a 2×2 or 2×3 footprint (the tile layout is designed for that shape).
+3. Point it at: `https://deanzulberg.github.io/fin-dashboard/widget.html`
+4. Set the refresh interval to **~30 min**, matching how often the Worker updates `data.json` —
+   refreshing more often just reloads the same data.
 
-```json
-"widget": {
-  "generatedAt": "2026-07-01T20:13:00.642Z",
-  "usdZar": 16.38,
-  "jseTop40": 101276.41,
-  "jseTop40ChangePct": -1.31,
-  "spx500ChangePct": 1.70,
-  "saRepoRate": 7,
-  "saInflationLatestPct": 4.5,
-  "btcUsd": 59862.78
-}
-```
+**Multiple widgets for different sections:** `widget.html` reads a `?section=` query parameter,
+so you can add several WebsiteWidget instances, each pinned to a different part of the market
+picture instead of one page trying to show everything. Supported values:
 
-Edit the `widget:` block in `scripts/lib/build-data.mjs` to change which figures are included.
+| `?section=` value | Shows |
+|---|---|
+| `forex` | USD/EUR/GBP/CNY vs ZAR |
+| `commodities` | Gold, silver, Brent crude, platinum, copper, natural gas |
+| `indices` | JSE Top 40/All Share, S&P 500, Nasdaq, Dow, FTSE |
+| `crypto` | BTC, ETH |
+| `risk` | VIX, US 10Y yield, US Dollar Index |
+| `rates` | SA prime/repo rate, JIBAR 3M, 10Y bond |
+| `inflation` | SA CPI — latest month, quarter average, YTD average |
+| `headlines` | Curated mix: USD/GBP, gold/silver/Brent/nat gas, JSE All Share, S&P 500, BTC, SA inflation (default if `?section=` is omitted or unrecognised) |
 
-**KWGT setup** (the repo being public means `data.json` is reachable with no login, so this needs
-no special bypass config):
-1. Install **KWGT** from the Play Store (and the free KWGT companion pack if prompted).
-2. Long-press your home screen → **Widgets → Kustom Widget** → drop it anywhere.
-3. In the KWGT editor: **+ → Global → Web**. URL:
-   `https://deanzulberg.github.io/fin-dashboard/data.json`, refresh interval ~30 min.
-4. Add a **Text** module per number you want visible; pull each value via KWGT's JSON path syntax
-   (check KWGT's in-app formula help for exact function names, they vary by version) — the field
-   paths themselves are simply `widget.usdZar`, `widget.jseTop40ChangePct`, etc., matching the
-   block above one-to-one.
-5. Style/position, save, resize on your home screen.
+Example: `https://deanzulberg.github.io/fin-dashboard/widget.html?section=crypto` for a
+BTC/ETH-only widget.
 
-I can't build/test the actual widget myself since it's configured entirely inside the KWGT app
-on your phone — everything on the data/hosting side is done to make that step as easy as possible.
+> **Deprecated:** an earlier version of this README documented a KWGT (Kustom Widget Maker) setup
+> that polled the flattened `widget` object in `data.json` directly and required manually wiring
+> up JSON-path text modules per field. `widget.html` replaces that — it's simpler to set up (one
+> URL, no per-field formulas) and already styled, so KWGT is no longer the recommended approach.
 
 ## Local testing / manual trigger
 

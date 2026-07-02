@@ -10,7 +10,11 @@ const YAHOO_HEADERS = {
   Accept: "application/json",
 };
 
-async function fetchJson(url, opts = {}, retries = 2) {
+// No retries by default: Cloudflare Workers caps subrequests (including retries) at 50
+// per invocation, and this module already makes ~40 base calls (32 of them one per
+// quote symbol) — retrying failures would risk tipping over that limit. A single
+// missing value just renders as "—" in the UI, which is already handled everywhere.
+async function fetchJson(url, opts = {}, retries = 0) {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const res = await fetch(url, opts);
@@ -68,20 +72,22 @@ async function fetchForex(currencies) {
   return out;
 }
 
-async function fetchWorldBank(countryCode, indicator) {
-  const url = `https://api.worldbank.org/v2/country/${countryCode}/indicator/${indicator}?format=json&mrv=1`;
-  const json = await fetchJson(url);
-  const entry = json?.[1]?.[0];
-  if (!entry || entry.value == null) return { value: null, year: null };
-  return { value: entry.value, year: entry.date };
-}
-
-async function fetchWorldBankRegion(countryCode, indicators) {
+// Fetches each indicator ONCE across ALL countries at once (World Bank's API accepts a
+// semicolon-joined country list), instead of once per country per indicator — 3 calls
+// total instead of 9, which matters given the Workers subrequest budget above.
+async function fetchWorldBankMulti(countryCodes, indicators) {
+  const joined = countryCodes.join(";");
   const out = {};
+  for (const code of countryCodes) out[code] = {};
   for (const ind of indicators) {
-    const { value, year } = await fetchWorldBank(countryCode, ind.code);
-    out[ind.key] = round(value);
-    out[ind.key.replace(/Pct$/, "Year")] = yearRelative(year);
+    const url = `https://api.worldbank.org/v2/country/${joined}/indicator/${ind.code}?format=json&mrv=1&per_page=100`;
+    const json = await fetchJson(url);
+    const rows = json?.[1] ?? [];
+    for (const code of countryCodes) {
+      const entry = rows.find((r) => r.country?.id === code);
+      out[code][ind.key] = round(entry?.value ?? null);
+      out[code][ind.key.replace(/Pct$/, "Year")] = yearRelative(entry?.date ?? null);
+    }
   }
   return out;
 }
@@ -220,18 +226,24 @@ export async function buildData({ metrics, watchlist, ratesFallback }) {
   ];
 
   console.log(`Fetching ${new Set(allSymbols).size} unique symbols from Yahoo Finance...`);
-  const [quotes, forex, rates, sarbCpiPpi, saWb, usWb, ukWb, globalGdp, globalInflation] =
+  const wbCodes = [
+    metrics.macroCountries.sa.worldBankCountry,
+    metrics.macroCountries.us.worldBankCountry,
+    metrics.macroCountries.uk.worldBankCountry,
+  ];
+  const [quotes, forex, rates, sarbCpiPpi, wbByCountry, globalGdp, globalInflation] =
     await Promise.all([
       fetchAllQuotes(allSymbols),
       fetchForex(metrics.forexCurrencies),
       fetchSarbRates(ratesFallback),
       fetchSarbCpiPpi(),
-      fetchWorldBankRegion(metrics.macroCountries.sa.worldBankCountry, metrics.worldBankIndicators),
-      fetchWorldBankRegion(metrics.macroCountries.us.worldBankCountry, metrics.worldBankIndicators),
-      fetchWorldBankRegion(metrics.macroCountries.uk.worldBankCountry, metrics.worldBankIndicators),
+      fetchWorldBankMulti(wbCodes, metrics.worldBankIndicators),
       fetchImfWorld("NGDP_RPCH"),
       fetchImfWorld("PCPIPCH"),
     ]);
+  const saWb = wbByCountry[metrics.macroCountries.sa.worldBankCountry];
+  const usWb = wbByCountry[metrics.macroCountries.us.worldBankCountry];
+  const ukWb = wbByCountry[metrics.macroCountries.uk.worldBankCountry];
 
   const mapIndicator = (list) =>
     list.map(({ symbol, name }) => {

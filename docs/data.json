@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-02T07:10:33.731Z",
+  "generatedAt": "2026-07-02T21:36:48.349Z",
   "forex": {
     "asOf": "Thu, 02 Jul 2026 00:02:31 +0000",
     "USD": 16.411682,
@@ -11,110 +11,110 @@
     {
       "symbol": "GC=F",
       "name": "Gold",
-      "price": 4083.7,
-      "changePct": 1.53
+      "price": 4135.5,
+      "changePct": 2.81
     },
     {
       "symbol": "SI=F",
       "name": "Silver",
-      "price": 60.3,
-      "changePct": 3.65
+      "price": 61.44,
+      "changePct": 5.61
     },
     {
       "symbol": "BZ=F",
       "name": "Brent Crude",
-      "price": 70.56,
-      "changePct": -3.54
+      "price": 71.54,
+      "changePct": -2.2
     },
     {
       "symbol": "PL=F",
       "name": "Platinum",
-      "price": 1622.2,
-      "changePct": 3.03
+      "price": 1631.9,
+      "changePct": 3.65
     },
     {
       "symbol": "HG=F",
       "name": "Copper",
-      "price": 6.14,
-      "changePct": 0.72
+      "price": 6.18,
+      "changePct": 1.28
     },
     {
       "symbol": "NG=F",
       "name": "Natural Gas",
-      "price": 3.18,
-      "changePct": 0.03
+      "price": 3.21,
+      "changePct": 0.75
     }
   ],
   "indices": [
     {
       "symbol": "^J200.JO",
       "name": "JSE Top 40",
-      "price": 101276.41,
-      "changePct": -0.61
+      "price": 102083.88,
+      "changePct": 0.19
     },
     {
       "symbol": "^J203.JO",
       "name": "JSE All Share",
-      "price": 109613.16,
-      "changePct": -0.56
+      "price": 110449.25,
+      "changePct": 0.2
     },
     {
       "symbol": "^GSPC",
       "name": "S&P 500",
-      "price": 7483.23,
-      "changePct": 1.7
+      "price": 7483.24,
+      "changePct": 1.71
     },
     {
       "symbol": "^IXIC",
       "name": "Nasdaq Composite",
-      "price": 26040.03,
-      "changePct": 2.21
+      "price": 25832.67,
+      "changePct": 1.87
     },
     {
       "symbol": "^DJI",
       "name": "Dow Jones",
-      "price": 52305.24,
-      "changePct": 0.88
+      "price": 52900.07,
+      "changePct": 1.89
     },
     {
       "symbol": "^FTSE",
       "name": "FTSE 100",
-      "price": 10478.34,
-      "changePct": -0.49
+      "price": 10652.87,
+      "changePct": 1.17
     }
   ],
   "crypto": [
     {
       "symbol": "BTC-USD",
       "name": "Bitcoin",
-      "price": 60184.93,
-      "changePct": 1.1
+      "price": 61476.97,
+      "changePct": 3.27
     },
     {
       "symbol": "ETH-USD",
       "name": "Ethereum",
-      "price": 1617.19,
-      "changePct": 2.98
+      "price": 1699.65,
+      "changePct": 8.23
     }
   ],
   "riskIndicators": [
     {
       "symbol": "^VIX",
       "name": "VIX (volatility)",
-      "price": 16.59,
-      "changePct": -9.89
+      "price": 16.15,
+      "changePct": -12.28
     },
     {
       "symbol": "^TNX",
       "name": "US 10Y Treasury yield",
-      "price": 4.47,
-      "changePct": 1.89
+      "price": 4.49,
+      "changePct": 2.58
     },
     {
       "symbol": "DX-Y.NYB",
       "name": "US Dollar Index",
-      "price": 101.22,
-      "changePct": 0.11
+      "price": 100.86,
+      "changePct": -0.25
     }
   ],
   "regions": {
@@ -141,8 +141,8 @@
     },
     "us": {
       "label": "United States",
-      "inflationPct": 2.95,
-      "inflationYear": "2024",
+      "inflationPct": null,
+      "inflationYear": "last year",
       "gdpGrowthPct": 2.16,
       "gdpGrowthYear": "last year",
       "unemploymentPct": 4.2,
@@ -168,8 +168,8 @@
   "rates": {
     "primeRate": 10.5,
     "repoRate": 7,
-    "jibar3m": 6.99,
-    "bond10y": 8.53,
+    "jibar3m": 7,
+    "bond10y": 8.57,
     "asOf": "2026-07-02",
     "source": "SARB live"
   },
@@ -181,64 +181,64 @@
         {
           "symbol": "AGL.JO",
           "name": "Anglo American",
-          "price": 798.2,
-          "changePct": 0.02,
+          "price": 811.5,
+          "changePct": 1.69,
           "priceZAR": null
         },
         {
           "symbol": "ANG.JO",
           "name": "AngloGold Ashanti",
-          "price": 1338.92,
-          "changePct": -0.2,
+          "price": 1369.92,
+          "changePct": 2.11,
           "priceZAR": null
         },
         {
           "symbol": "CPI.JO",
           "name": "Capitec",
-          "price": 4729.06,
-          "changePct": 1.15,
+          "price": 4752.21,
+          "changePct": 1.65,
           "priceZAR": null
         },
         {
           "symbol": "CLS.JO",
           "name": "Clicks Group",
-          "price": 231.85,
-          "changePct": 4.91,
+          "price": 230.39,
+          "changePct": 4.25,
           "priceZAR": null
         },
         {
           "symbol": "DSY.JO",
           "name": "Discovery",
-          "price": 260.75,
-          "changePct": -7.21,
+          "price": 267.74,
+          "changePct": -4.72,
           "priceZAR": null
         },
         {
           "symbol": "OUT.JO",
           "name": "Outsurance Group",
-          "price": 78.1,
-          "changePct": 2.51,
+          "price": 79.19,
+          "changePct": 3.94,
           "priceZAR": null
         },
         {
           "symbol": "PPH.JO",
           "name": "Pepkor Holdings",
-          "price": 21.73,
-          "changePct": -0.78,
+          "price": 22.15,
+          "changePct": 1.14,
           "priceZAR": null
         },
         {
           "symbol": "SHP.JO",
           "name": "Shoprite Holdings",
-          "price": 287.36,
-          "changePct": -2.25,
+          "price": 291.3,
+          "changePct": -0.91,
           "priceZAR": null
         },
         {
           "symbol": "SBK.JO",
           "name": "Standard Bank Group",
-          "price": 314.3,
-          "changePct": -1.19,
+          "price": 321.27,
+          "changePct": 1,
           "priceZAR": null
         }
       ]
@@ -250,8 +250,8 @@
         {
           "symbol": "STX40.JO",
           "name": "Satrix 40 ETF",
-          "price": 102.85,
-          "changePct": -0.64,
+          "price": 103.73,
+          "changePct": 0.21,
           "priceZAR": null
         }
       ]
@@ -263,49 +263,59 @@
         {
           "symbol": "CVX",
           "name": "Chevron",
-          "price": 165.69,
-          "changePct": -3.36,
-          "priceZAR": 2719.25
+          "price": 169.2,
+          "changePct": -1.76,
+          "priceZAR": 2776.86
         },
         {
           "symbol": "INTC",
           "name": "Intel",
-          "price": 127.02,
-          "changePct": -3.52,
-          "priceZAR": 2084.61
+          "price": 120.35,
+          "changePct": -9.42,
+          "priceZAR": 1975.15
         },
         {
           "symbol": "JPM",
           "name": "JPMorgan Chase",
-          "price": 334.07,
-          "changePct": 0.19,
-          "priceZAR": 5482.65
+          "price": 334.47,
+          "changePct": -0.19,
+          "priceZAR": 5489.22
         },
         {
           "symbol": "TSLA",
           "name": "Tesla",
-          "price": 425.3,
-          "changePct": 13.25,
-          "priceZAR": 6979.89
+          "price": 393.45,
+          "changePct": 4.89,
+          "priceZAR": 6457.18
         },
         {
           "symbol": "WMT",
           "name": "Walmart",
-          "price": 108.82,
-          "changePct": -8.55,
-          "priceZAR": 1785.92
+          "price": 111.84,
+          "changePct": -3.4,
+          "priceZAR": 1835.48
         }
       ]
     }
   },
   "widget": {
-    "generatedAt": "2026-07-02T07:10:33.731Z",
+    "generatedAt": "2026-07-02T21:36:48.349Z",
     "usdZar": 16.41,
-    "jseTop40": 101276.41,
-    "jseTop40ChangePct": -0.61,
-    "spx500ChangePct": 1.7,
-    "saRepoRate": 7,
-    "saInflationLatestPct": 4.5,
-    "btcUsd": 60184.93
+    "gbpZar": 21.77,
+    "gold": 4135.5,
+    "goldChangePct": 2.81,
+    "silver": 61.44,
+    "silverChangePct": 5.61,
+    "brentCrude": 71.54,
+    "brentCrudeChangePct": -2.2,
+    "naturalGas": 3.21,
+    "naturalGasChangePct": 0.75,
+    "jseAllShare": 110449.25,
+    "jseAllShareChangePct": 0.2,
+    "spx500": 7483.24,
+    "spx500ChangePct": 1.71,
+    "btcUsd": 61476.97,
+    "saInflationQuarterPct": 4.25,
+    "saInflationQuarterNum": 2
   }
 }
