@@ -195,18 +195,12 @@ const RENDERERS = {
     const jseAllShare = findBy(d.indices, "^J203.JO");
     const spx500 = findBy(d.indices, "^GSPC");
     const gold = findBy(d.commodities, "GC=F");
-    const silver = findBy(d.commodities, "SI=F");
-    const brent = findBy(d.commodities, "BZ=F");
-    const natGas = findBy(d.commodities, "NG=F");
     const btc = findBy(d.crypto, "BTC-USD");
     const inf = d.regions?.sa?.inflation;
     return [
       tile(icon(FOREX_META.USD), "USD", fmtR(d.forex?.USD), undefined, FOREX_META.USD.color),
       tile(icon(FOREX_META.GBP), "GBP", fmtR(d.forex?.GBP), undefined, FOREX_META.GBP.color),
       tile(icon(COMMODITY_META["GC=F"]), "Gold", fmtUSD(gold?.price), gold?.changePct, COMMODITY_META["GC=F"].color),
-      tile(icon(COMMODITY_META["SI=F"]), "Silver", fmtUSD(silver?.price), silver?.changePct, COMMODITY_META["SI=F"].color),
-      tile(icon(COMMODITY_META["BZ=F"]), "Brent", fmtUSD(brent?.price), brent?.changePct, COMMODITY_META["BZ=F"].color),
-      tile(icon(COMMODITY_META["NG=F"]), "Nat Gas", fmtUSD(natGas?.price), natGas?.changePct, COMMODITY_META["NG=F"].color),
       tile(icon(COUNTRY.ZA), "JSE All Sh.", fmtNum(jseAllShare?.price, 0), jseAllShare?.changePct, COUNTRY.ZA.color),
       tile(icon(COUNTRY.US), "S&amp;P 500", fmtNum(spx500?.price, 0), spx500?.changePct, COUNTRY.US.color),
       tile(icon(CRYPTO_META["BTC-USD"]), "BTC", fmtUSD(btc?.price, 0), btc?.changePct, CRYPTO_META["BTC-USD"].color),
