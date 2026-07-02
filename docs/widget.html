@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Market Widget</title>
+<style>
+  :root {
+    --bg: #111a24;
+    --bg2: #182430;
+    --card: #1d2a37;
+    --text: #e9eff5;
+    --muted: #92a2b5;
+    --up: #3ddc84;
+    --down: #ff6b6e;
+    --border: #2d3d4d;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 10px;
+  }
+  #meta { color: var(--muted); font-size: 0.68rem; text-align: center; margin-bottom: 8px; }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .tile {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 10px;
+  }
+  .tile .label { color: var(--muted); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  .tile .value { font-size: 1.15rem; font-weight: 700; margin-top: 2px; }
+  .tile .chg { font-size: 0.75rem; font-weight: 600; margin-top: 1px; }
+  .up { color: var(--up); }
+  .down { color: var(--down); }
+  .flat { color: var(--muted); }
+</style>
+</head>
+<body>
+  <div id="meta">Loading…</div>
+  <div class="grid" id="grid"></div>
+
+<script>
+const fmtR = (n) => n == null ? "—" : "R" + n.toLocaleString("en-ZA", { maximumFractionDigits: 2 });
+const fmtNum = (n, dp = 2) => n == null ? "—" : n.toLocaleString("en-ZA", { maximumFractionDigits: dp });
+const fmtUSD = (n, dp = 0) => n == null ? "—" : "$" + n.toLocaleString("en-US", { maximumFractionDigits: dp });
+const fmtPct = (n) => n == null ? "—" : (n > 0 ? "+" : "") + n.toFixed(2) + "%";
+const pctClass = (n) => n == null ? "flat" : n > 0 ? "up" : n < 0 ? "down" : "flat";
+
+function tile(label, value, changePct) {
+  const chg = changePct !== undefined
+    ? `<div class="chg ${pctClass(changePct)}">${fmtPct(changePct)}</div>`
+    : "";
+  return `<div class="tile"><div class="label">${label}</div><div class="value">${value}</div>${chg}</div>`;
+}
+
+async function load() {
+  try {
+    const res = await fetch(`data.json?ts=${Date.now()}`, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const d = await res.json();
+    render(d);
+  } catch (err) {
+    document.getElementById("meta").textContent = "Failed to load: " + err.message;
+  }
+}
+
+function render(d) {
+  const w = d.widget;
+  const generated = new Date(w.generatedAt);
+  const ageMin = Math.round((Date.now() - generated.getTime()) / 60000);
+  document.getElementById("meta").textContent =
+    `${generated.toLocaleTimeString("en-ZA", { timeZone: "Africa/Johannesburg", hour: "2-digit", minute: "2-digit" })} SAST (${ageMin}m ago)`;
+
+  document.getElementById("grid").innerHTML = [
+    tile("USD/ZAR", fmtR(w.usdZar)),
+    tile("BTC/USD", fmtUSD(w.btcUsd)),
+    tile("JSE Top 40", fmtNum(w.jseTop40, 0), w.jseTop40ChangePct),
+    tile("S&amp;P 500", "", w.spx500ChangePct),
+    tile("SA Repo Rate", w.saRepoRate + "%"),
+    tile("SA Inflation", w.saInflationLatestPct + "%"),
+  ].join("");
+}
+
+load();
+</script>
+</body>
+</html>
