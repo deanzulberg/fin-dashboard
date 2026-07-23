@@ -14,10 +14,10 @@ const ROOT = path.resolve(__dirname, "..");
 
 async function main() {
   const metrics = JSON.parse(await readFile(path.join(ROOT, "config/metrics.json"), "utf8"));
-  const watchlist = JSON.parse(await readFile(path.join(ROOT, "config/watchlist.json"), "utf8"));
+  const countries = JSON.parse(await readFile(path.join(ROOT, "config/countries.json"), "utf8"));
   const ratesFallback = JSON.parse(await readFile(path.join(ROOT, "config/rates.json"), "utf8"));
 
-  const data = await buildData({ metrics, watchlist, ratesFallback });
+  const data = await buildData({ metrics, countries, ratesFallback });
 
   const outPath = path.join(ROOT, "docs/data.json");
   await writeFile(outPath, JSON.stringify(data, null, 2));

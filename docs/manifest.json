@@ -1,13 +1,13 @@
 {
-  "name": "Market Dashboard",
-  "short_name": "Markets",
-  "description": "Live market indicators and watchlist prices in ZAR",
+  "name": "Macro Monitor",
+  "short_name": "Macro",
+  "description": "Sovereign & economic indicators across major and developing economies, refreshed every 3 days",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#111a24",
-  "theme_color": "#111a24",
+  "background_color": "#0e1a18",
+  "theme_color": "#0e1a18",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },

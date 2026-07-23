@@ -5,7 +5,7 @@
 // GitHub Actions involved at all.
 
 import metrics from "../../config/metrics.json";
-import watchlist from "../../config/watchlist.json";
+import countries from "../../config/countries.json";
 import ratesFallback from "../../config/rates.json";
 import { buildData } from "../../scripts/lib/build-data.mjs";
 
@@ -39,7 +39,7 @@ async function commitToGitHub(data, token) {
     method: "PUT",
     headers: { ...headers, "Content-Type": "application/json" },
     body: JSON.stringify({
-      message: "chore: refresh market data",
+      message: "chore: refresh macro indicators",
       content: toBase64Utf8(content),
       sha: current.sha,
       branch: BRANCH,
@@ -55,7 +55,7 @@ async function run(env) {
   if (!env.GITHUB_TOKEN) {
     throw new Error("GITHUB_TOKEN secret is not set (wrangler secret put GITHUB_TOKEN)");
   }
-  const data = await buildData({ metrics, watchlist, ratesFallback });
+  const data = await buildData({ metrics, countries, ratesFallback });
   await commitToGitHub(data, env.GITHUB_TOKEN);
   return data;
 }

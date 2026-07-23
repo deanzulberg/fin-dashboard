@@ -1,19 +1,19 @@
-// Platform-agnostic core: fetches market data + builds the dashboard's data.json
-// shape. No filesystem or process access here, so this same module runs unchanged
-// under Node (scripts/fetch-data.mjs) and inside a Cloudflare Worker
-// (worker/src/index.mjs) — both just call buildData({ metrics, watchlist, ratesFallback })
+// Platform-agnostic core: fetches sovereign macro data + builds the dashboard's
+// data.json shape. No filesystem or process access here, so this same module runs
+// unchanged under Node (scripts/fetch-data.mjs) and inside a Cloudflare Worker
+// (worker/src/index.mjs) — both just call buildData({ metrics, countries, ratesFallback })
 // and decide separately where the result gets written.
+//
+// Data sources (all free, no API key):
+//   - IMF World Economic Outlook (WEO) DataMapper: the six annual numeric macro
+//     indicators (GDP, real growth, inflation, current account, budget balance, debt),
+//     one request per indicator covering every economy at once.
+//   - SARB Web API: live South African repo rate and 10y bond yield (overrides the
+//     hand-maintained seeds in config/countries.json for SA only), plus monthly CPI
+//     detail for a South Africa latest-month inflation figure.
+// Everything else on a country (central-bank policy rate, credit rating, bond yield,
+// quarterly GDP) has no reliable free feed and is read straight from config/countries.json.
 
-const YAHOO_HEADERS = {
-  "User-Agent":
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
-  Accept: "application/json",
-};
-
-// No retries by default: Cloudflare Workers caps subrequests (including retries) at 50
-// per invocation, and this module already makes ~40 base calls (32 of them one per
-// quote symbol) — retrying failures would risk tipping over that limit. A single
-// missing value just renders as "—" in the UI, which is already handled everywhere.
 async function fetchJson(url, opts = {}, retries = 0) {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
@@ -30,75 +30,19 @@ async function fetchJson(url, opts = {}, retries = 0) {
   }
 }
 
-async function fetchYahooQuote(symbol) {
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
-    symbol
-  )}?interval=1d&range=5d`;
-  const json = await fetchJson(url, { headers: YAHOO_HEADERS });
-  const meta = json?.chart?.result?.[0]?.meta;
-  if (!meta || meta.regularMarketPrice == null) {
-    console.error(`No usable quote data for ${symbol}`);
-    return { symbol, price: null, prevClose: null, changePct: null, currency: null };
-  }
-  const price = meta.regularMarketPrice;
-  const prevClose = meta.previousClose ?? meta.chartPreviousClose ?? null;
-  const changePct = prevClose ? ((price - prevClose) / prevClose) * 100 : null;
-  return { symbol, price, prevClose, changePct, currency: meta.currency ?? null };
+// IMF WEO DataMapper returns EVERY economy for a given indicator in one response
+// (the country path segment is ignored server-side), so we fetch once per indicator
+// and index into it per country — 6 requests total, well within the Worker's budget.
+// Shape: { values: { CODE: { ISO3: { "1980": n, ..., "2031": n } } } }.
+async function fetchImfIndicator(code) {
+  const json = await fetchJson(`https://www.imf.org/external/datamapper/api/v1/${code}`);
+  return json?.values?.[code] ?? null;
 }
 
-async function fetchAllQuotes(symbols) {
-  const unique = [...new Set(symbols)];
-  const results = new Map();
-  // Sequential with tiny delay: gentler on Yahoo than firing everything at once.
-  for (const sym of unique) {
-    const q = await fetchYahooQuote(sym);
-    results.set(sym, q);
-    await new Promise((r) => setTimeout(r, 150));
-  }
-  return results;
-}
-
-async function fetchForex(currencies) {
-  const json = await fetchJson("https://open.er-api.com/v6/latest/USD");
-  if (!json || json.result !== "success") {
-    console.error("Forex fetch failed, forex data will be null");
-    return null;
-  }
-  const r = json.rates; // r.X = units of X per 1 USD
-  const zarPerUsd = r.ZAR;
-  const zarPer = (code) => (code === "USD" ? zarPerUsd : zarPerUsd / r[code]);
-  const out = { asOf: json.time_last_update_utc };
-  for (const code of currencies) out[code] = zarPer(code);
-  return out;
-}
-
-// Fetches each indicator ONCE across ALL countries at once (World Bank's API accepts a
-// semicolon-joined country list), instead of once per country per indicator — 3 calls
-// total instead of 9, which matters given the Workers subrequest budget above.
-async function fetchWorldBankMulti(countryCodes, indicators) {
-  const joined = countryCodes.join(";");
-  const out = {};
-  for (const code of countryCodes) out[code] = {};
-  for (const ind of indicators) {
-    const url = `https://api.worldbank.org/v2/country/${joined}/indicator/${ind.code}?format=json&mrv=1&per_page=100`;
-    const json = await fetchJson(url);
-    const rows = json?.[1] ?? [];
-    for (const code of countryCodes) {
-      const entry = rows.find((r) => r.country?.id === code);
-      out[code][ind.key] = round(entry?.value ?? null);
-      out[code][ind.key.replace(/Pct$/, "Year")] = yearRelative(entry?.date ?? null);
-    }
-  }
-  return out;
-}
-
-// IMF World Economic Outlook DataMapper: the only reliable free "whole world" aggregate
-// we found. World Bank's own WLD aggregate returns HTTP 502 for every growth-rate/ratio
-// indicator we tried (population-style level indicators work, rates don't) — a server-side
-// bug on their end, not a client issue, so we don't rely on it here.
-async function fetchImfWorld(code) {
-  const json = await fetchJson(`https://www.imf.org/external/datamapper/api/v1/${code}/WEOWORLD`);
-  const series = json?.values?.[code]?.WEOWORLD;
+// Latest year at or before the current calendar year. WEO always carries current-year
+// estimates and future-year projections; clamping to <= current year prefers the
+// nearest-to-actual figure rather than a multi-year-out forecast.
+function latestValue(series) {
   if (!series) return { value: null, year: null };
   const currentYear = new Date().getUTCFullYear();
   const years = Object.keys(series)
@@ -107,216 +51,115 @@ async function fetchImfWorld(code) {
     .sort((a, b) => a - b);
   if (!years.length) return { value: null, year: null };
   const year = years[years.length - 1];
-  // Note: IMF WEO always includes a current-year projection, so "this year" here
-  // may in practice be a forecast rather than an outturn.
-  return { value: series[String(year)], year: yearRelative(year) };
+  return { value: round(series[String(year)]), year };
 }
 
-// SARB Web API (custom.resbank.co.za) is a free, unauthenticated, no-key JSON API — no
-// scraping needed. Used for live policy rates and monthly CPI/PPI (World Bank only has
-// annual figures, too coarse for the quarterly/YTD inflation breakdown).
+// SARB Web API (custom.resbank.co.za) is a free, unauthenticated, no-key JSON API.
+// Used for South Africa's live policy rate + 10y bond yield and monthly CPI.
 const SARB_BASE = "https://custom.resbank.co.za/SarbWebApi";
 
-async function fetchSarbRates(fallback) {
+async function fetchSarbRates() {
   const json = await fetchJson(`${SARB_BASE}/WebIndicators/CurrentMarketRates`);
-  const find = (code) => json?.find((r) => r.TimeseriesCode === code)?.Value;
-  const primeRate = find("MMRD000A");
+  if (!json) return null;
+  const find = (code) => json.find((r) => r.TimeseriesCode === code)?.Value;
   const repoRate = find("MMRD002A");
-  const jibar3m = find("MMRD403A");
-  const bond10y = find("CMJD004A"); // "10 years and longer" daily average bond yield — a bonus, not in the fallback
-  if (primeRate == null || repoRate == null || jibar3m == null) {
-    console.error("SARB live rates unavailable, using config/rates.json fallback");
-    return { ...fallback, source: "config fallback" };
-  }
-  return {
-    primeRate: round(primeRate),
-    repoRate: round(repoRate),
-    jibar3m: round(jibar3m),
-    bond10y: round(bond10y),
-    asOf: new Date().toISOString().slice(0, 10),
-    source: "SARB live",
-  };
+  const bond10y = find("CMJD004A"); // "10 years and longer" daily average bond yield
+  if (repoRate == null && bond10y == null) return null;
+  return { repoRate: round(repoRate), bond10y: round(bond10y) };
 }
 
-// Summarizes a monthly year-on-year % series (e.g. CPI) into latest/quarter/YTD averages.
-function summarizeMonthlySeries(rows) {
+// Summarizes a monthly year-on-year % series (CPI) into a latest-month figure.
+async function fetchSaInflationLatest() {
+  const json = await fetchJson(`${SARB_BASE}/WebIndicators/ReleaseOfSelectedData/EconomicIndicators/4`);
+  if (!json) return null;
+  const rows = json
+    .filter((r) => r.TimeseriesCode === "CPI1000F")
+    .map((r) => ({ period: new Date(r.Period), value: r.Value }))
+    .sort((a, b) => a.period - b.period);
   if (!rows.length) return null;
-  const avg = (arr) => arr.reduce((s, r) => s + r.value, 0) / arr.length;
-
   const latest = rows[rows.length - 1];
-  const year = latest.period.getUTCFullYear();
-  const quarter = Math.floor(latest.period.getUTCMonth() / 3);
-  const quarterMonths = [quarter * 3, quarter * 3 + 1, quarter * 3 + 2];
-  const quarterRows = rows.filter(
-    (r) => r.period.getUTCFullYear() === year && quarterMonths.includes(r.period.getUTCMonth())
-  );
-  const ytdRows = rows.filter((r) => r.period.getUTCFullYear() === year);
-
   return {
     latestPct: round(latest.value),
-    quarterAvgPct: round(avg(quarterRows)),
-    quarterNum: quarter + 1, // 1-4, always derived from the latest data point, never hardcoded
-    ytdAvgPct: round(avg(ytdRows)),
-    yearLabel: yearRelative(year),
-  };
-}
-
-async function fetchSarbCpiPpi() {
-  // Graph #4 on SARB's "release of selected data" page happens to be headline CPI + PPI,
-  // 12-term (year-on-year) % change, ~3 years of monthly history.
-  const json = await fetchJson(`${SARB_BASE}/WebIndicators/ReleaseOfSelectedData/EconomicIndicators/4`);
-  if (!json) return { cpi: null, ppi: null };
-  const seriesRows = (code) =>
-    json
-      .filter((r) => r.TimeseriesCode === code)
-      .map((r) => ({ period: new Date(r.Period), value: r.Value }))
-      .sort((a, b) => a.period - b.period);
-  return {
-    cpi: summarizeMonthlySeries(seriesRows("CPI1000F")),
-    ppi: summarizeMonthlySeries(seriesRows("PPI1000F")),
+    monthLabel: latest.period.toLocaleString("en-ZA", { month: "short", year: "numeric", timeZone: "UTC" }),
   };
 }
 
 function round(n, dp = 2) {
-  if (n == null || Number.isNaN(n)) return null;
+  if (n == null || Number.isNaN(Number(n))) return null;
   const f = 10 ** dp;
-  return Math.round(n * f) / f;
+  return Math.round(Number(n) * f) / f;
 }
 
-// Keeps macro tile labels simple: "this year" / "last year" instead of a literal year number.
-function yearRelative(year) {
-  if (year == null) return null;
-  const y = typeof year === "number" ? year : parseInt(year, 10);
-  if (Number.isNaN(y)) return null;
-  const current = new Date().getUTCFullYear();
-  if (y === current) return "this year";
-  if (y === current - 1) return "last year";
-  return String(y);
-}
+export async function buildData({ metrics, countries, ratesFallback }) {
+  const list = countries.countries;
+  const indicators = metrics.imfIndicators;
 
-function buildWatchlistGroup(group, quotes, usdZar) {
-  const symbols = group.symbols.map((s) => {
-    const q = quotes.get(s.symbol) || {};
-    let price = q.price;
-    if (price != null && group.priceUnits === "cents") {
-      price = price / 100; // Yahoo returns JSE prices in ZA cents
-    }
-    const priceZAR =
-      group.priceUnits === "units" && price != null && usdZar ? price * usdZar : null;
-    return {
-      symbol: s.symbol,
-      name: s.name,
-      price: round(price),
-      changePct: round(q.changePct),
-      priceZAR: round(priceZAR),
-    };
+  console.log(`Fetching ${indicators.length} IMF WEO indicators for ${list.length} countries...`);
+  const [imfResults, sarbRates, saInflation] = await Promise.all([
+    Promise.all(indicators.map((ind) => fetchImfIndicator(ind.code))),
+    fetchSarbRates(),
+    fetchSaInflationLatest(),
+  ]);
+
+  // code -> { ISO3: series } for each indicator, keyed by our internal `key`.
+  const imfByKey = {};
+  indicators.forEach((ind, i) => {
+    imfByKey[ind.key] = imfResults[i];
   });
-  return { label: group.label, priceUnits: group.priceUnits, symbols };
-}
 
-export async function buildData({ metrics, watchlist, ratesFallback }) {
-  const watchlistGroups = Object.entries(watchlist).filter(([key]) => key !== "_comment");
+  const outCountries = list.map((c) => {
+    const out = {
+      code: c.code,
+      iso2: c.iso2,
+      label: c.label,
+      group: c.group,
+      color: c.color,
+      centralBank: c.centralBank,
+      policyRateName: c.policyRate?.name ?? null,
+      policyRatePct: c.policyRate?.value ?? null,
+      policyRateAsOf: c.policyRate?.asOf ?? null,
+      creditRating: c.creditRating ?? null,
+      bond10yPct: c.bond10y?.value ?? null,
+      bond10yAsOf: c.bond10y?.asOf ?? null,
+      gdpQoQPct: c.gdpQoQ?.value ?? null,
+      gdpQoQAsOf: c.gdpQoQ?.asOf ?? null,
+    };
 
-  const allSymbols = [
-    ...metrics.commodities.map((s) => s.symbol),
-    ...metrics.indices.map((s) => s.symbol),
-    ...metrics.crypto.map((s) => s.symbol),
-    ...(metrics.riskIndicators ?? []).map((s) => s.symbol),
-    ...watchlistGroups.flatMap(([, g]) => g.symbols.map((s) => s.symbol)),
-  ];
+    for (const ind of indicators) {
+      const series = imfByKey[ind.key]?.[c.code];
+      const { value, year } = latestValue(series);
+      out[ind.key] = value;
+      out[`${ind.key}Year`] = year;
+    }
 
-  console.log(`Fetching ${new Set(allSymbols).size} unique symbols from Yahoo Finance...`);
-  const wbCodes = [
-    metrics.macroCountries.sa.worldBankCountry,
-    metrics.macroCountries.us.worldBankCountry,
-    metrics.macroCountries.uk.worldBankCountry,
-  ];
-  const [quotes, forex, rates, sarbCpiPpi, wbByCountry, globalGdp, globalInflation] =
-    await Promise.all([
-      fetchAllQuotes(allSymbols),
-      fetchForex(metrics.forexCurrencies),
-      fetchSarbRates(ratesFallback),
-      fetchSarbCpiPpi(),
-      fetchWorldBankMulti(wbCodes, metrics.worldBankIndicators),
-      fetchImfWorld("NGDP_RPCH"),
-      fetchImfWorld("PCPIPCH"),
-    ]);
-  const saWb = wbByCountry[metrics.macroCountries.sa.worldBankCountry];
-  const usWb = wbByCountry[metrics.macroCountries.us.worldBankCountry];
-  const ukWb = wbByCountry[metrics.macroCountries.uk.worldBankCountry];
+    return out;
+  });
 
-  const mapIndicator = (list) =>
-    list.map(({ symbol, name }) => {
-      const q = quotes.get(symbol) || {};
-      return { symbol, name, price: round(q.price), changePct: round(q.changePct) };
-    });
-
-  const usdZar = forex?.USD ?? null;
-
-  const watchlistOut = {};
-  for (const [key, group] of watchlistGroups) {
-    watchlistOut[key] = buildWatchlistGroup(group, quotes, usdZar);
+  // South Africa: overlay live SARB figures on top of the hand-maintained seeds.
+  const sa = outCountries.find((c) => c.code === "ZAF");
+  if (sa) {
+    if (sarbRates?.repoRate != null) {
+      sa.policyRatePct = sarbRates.repoRate;
+      sa.policyRateAsOf = "live (SARB)";
+    }
+    if (sarbRates?.bond10y != null) {
+      sa.bond10yPct = sarbRates.bond10y;
+      sa.bond10yAsOf = "live (SARB)";
+    }
+    if (saInflation?.latestPct != null) {
+      sa.inflationLatestMonthPct = saInflation.latestPct;
+      sa.inflationMonthLabel = saInflation.monthLabel;
+    }
+    if (sarbRates == null) {
+      // SARB unreachable this run — fall back to the config repo-rate seed.
+      sa.policyRatePct = ratesFallback?.repoRate ?? sa.policyRatePct;
+    }
   }
 
-  // SA inflation is replaced with the live monthly SARB series (latest/quarter/YTD) instead
-  // of the coarser World Bank annual figure; GDP growth and unemployment stay World Bank.
-  const { inflationPct: _saInflationPct, inflationYear: _saInflationYear, ...saRest } = saWb;
-  const regions = {
-    sa: {
-      label: metrics.macroCountries.sa.label,
-      ...saRest,
-      inflation: sarbCpiPpi.cpi,
-      ppi: sarbCpiPpi.ppi,
-    },
-    us: { label: metrics.macroCountries.us.label, ...usWb },
-    uk: { label: metrics.macroCountries.uk.label, ...ukWb },
-    global: {
-      label: "Global",
-      gdpGrowthPct: round(globalGdp.value),
-      gdpGrowthYear: globalGdp.year,
-      inflationPct: round(globalInflation.value),
-      inflationYear: globalInflation.year,
-    },
-  };
-
-  const commodities = mapIndicator(metrics.commodities);
-  const indices = mapIndicator(metrics.indices);
-  const crypto = mapIndicator(metrics.crypto);
-  const findBy = (list, symbol) => list.find((x) => x.symbol === symbol);
-  const generatedAt = new Date().toISOString();
-
   return {
-    generatedAt,
-    forex,
-    commodities,
-    indices,
-    crypto,
-    riskIndicators: mapIndicator(metrics.riskIndicators ?? []),
-    regions,
-    rates,
-    watchlist: watchlistOut,
-    // A handful of flattened, top-level headline figures — no nested arrays to
-    // traverse — meant for glanceable Android home-screen widgets (e.g. KWGT)
-    // that fetch this JSON directly, rather than the full dashboard.
-    widget: {
-      generatedAt,
-      usdZar: round(usdZar),
-      gbpZar: round(forex?.GBP ?? null),
-      gold: findBy(commodities, "GC=F")?.price ?? null,
-      goldChangePct: findBy(commodities, "GC=F")?.changePct ?? null,
-      silver: findBy(commodities, "SI=F")?.price ?? null,
-      silverChangePct: findBy(commodities, "SI=F")?.changePct ?? null,
-      brentCrude: findBy(commodities, "BZ=F")?.price ?? null,
-      brentCrudeChangePct: findBy(commodities, "BZ=F")?.changePct ?? null,
-      naturalGas: findBy(commodities, "NG=F")?.price ?? null,
-      naturalGasChangePct: findBy(commodities, "NG=F")?.changePct ?? null,
-      jseAllShare: findBy(indices, "^J203.JO")?.price ?? null,
-      jseAllShareChangePct: findBy(indices, "^J203.JO")?.changePct ?? null,
-      spx500: findBy(indices, "^GSPC")?.price ?? null,
-      spx500ChangePct: findBy(indices, "^GSPC")?.changePct ?? null,
-      btcUsd: findBy(crypto, "BTC-USD")?.price ?? null,
-      saInflationQuarterPct: regions.sa.inflation?.quarterAvgPct ?? null,
-      saInflationQuarterNum: regions.sa.inflation?.quarterNum ?? null,
-    },
+    generatedAt: new Date().toISOString(),
+    refreshIntervalDays: 3,
+    indicators: indicators.map((i) => ({ key: i.key, label: i.label })),
+    countries: outCountries,
   };
 }

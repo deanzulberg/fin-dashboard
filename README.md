@@ -1,116 +1,106 @@
-# Market Dashboard
+# Macro Monitor
 
-A mobile dashboard of market/economic indicators + live prices for a watchlist of symbols (ZAR),
-auto-refreshed by a scheduled Cloudflare Worker and served as a static site on GitHub Pages.
+A mobile dashboard of **sovereign macroeconomic indicators** across South Africa, the world's
+biggest markets, and a set of developing economies — auto-refreshed by a scheduled Cloudflare
+Worker **every 3 days** and served as a static site on GitHub Pages.
 
-No quantities, cost basis, position values, or P&L are stored or shown anywhere — just prices
-and daily % change for whatever symbols you list in the config files. The repo is **public**
-(confirmed clean of any personal figures, including full git history) — the only thing it
-reveals is which tickers are in the watchlist, which you've said is fine.
+These are slow-moving structural indicators (GDP, growth, inflation, debt, etc.), not live
+trading data — so the whole thing refreshes on a 3-day cadence rather than intraday. No live
+forex / commodity / index / crypto tickers, no watchlist, no home-screen widgets (all removed).
+
+The repo is **public** — it reveals nothing personal, only which countries and indicators are
+tracked.
 
 ## ✅ It's live
 
 **https://deanzulberg.github.io/fin-dashboard/**
 
 **Add to your Android home screen:** open that URL in Chrome → tap **⋮** → **Add to Home screen**
-(or use the automatic "Install app" banner if Chrome shows one). You now have an app-like icon
-that opens the dashboard full-screen. Data refreshes automatically every 30 min during SA market
-hours (07:00–23:30 SAST, weekdays) — just reopen the page to see the latest.
+(or use the automatic "Install app" banner if Chrome shows one). You get an app-like icon that
+opens the dashboard full-screen. The underlying data refreshes automatically every 3 days — just
+reopen the page to see the latest.
 
-Everything below this point is reference material — how it works, how to customize it, and the
-full manual steps in case you ever need to redo any part of this.
+## What it shows
+
+For each country, nine indicators:
+
+| Indicator | Source |
+|---|---|
+| GDP (nominal, USD) | IMF WEO (annual) |
+| Real GDP growth — annual | IMF WEO (annual) |
+| Real GDP growth — quarter | `config/countries.json` (`gdpQoQ`, optional/manual) |
+| Central/reserve bank policy rate | `config/countries.json` (SA is live from SARB) |
+| Inflation (avg CPI) | IMF WEO (annual); SA also shows latest month live from SARB |
+| Sovereign credit rating (S&P · Moody's · Fitch) | `config/countries.json` (manual) |
+| 10-year government bond yield | `config/countries.json` (SA is live from SARB) |
+| Current-account balance (% GDP) | IMF WEO (annual) |
+| Government budget balance (% GDP) | IMF WEO (annual) — deficit is negative |
+| Government debt (% GDP) | IMF WEO (annual) |
+
+Countries are grouped into **Home market** (South Africa), **Major markets** (US, China, Japan,
+Germany, UK, India, UAE, Saudi Arabia) and **Emerging & developing markets** (Brazil, Nigeria,
+Egypt, Kenya, Zambia, Zimbabwe).
 
 ## How it works
 
-1. **`scripts/lib/build-data.mjs`** is the platform-agnostic core: fetches Yahoo Finance quotes,
-   forex, World Bank macro data, live SARB policy rates + monthly CPI/PPI, and the IMF's global
-   growth/inflation aggregate, for whatever's listed in `config/metrics.json` and
-   `config/watchlist.json`. It has no filesystem/process access, so it runs unchanged in two
-   places:
+1. **`scripts/lib/build-data.mjs`** is the platform-agnostic core: it fetches the six numeric
+   annual indicators from the **IMF World Economic Outlook DataMapper** (a free, no-key API —
+   one request per indicator returns every economy at once), reads the hand-maintained
+   slow-moving fields from `config/countries.json`, and overlays South Africa's live repo rate,
+   10y bond yield and latest-month CPI from the **SARB Web API**. It has no filesystem/process
+   access, so it runs unchanged in two places:
    - **`scripts/fetch-data.mjs`** — Node entry point, for running locally (`node scripts/fetch-data.mjs`).
-   - **`worker/src/index.mjs`** — Cloudflare Worker entry point, for the real scheduled job. Runs
-     on a Cron Trigger every 30 min (07:00–23:30 SAST, weekdays — see `worker/wrangler.toml`),
-     then commits the result straight to `docs/data.json` in this repo via the GitHub API. It
-     deploys with `workers_dev = false` — it only needs to run on a schedule, never a public URL.
-2. **`docs/index.html`** is a static page that reads `data.json` and renders the dashboard. It's
-   a PWA (manifest + service worker) so Android can "Add to Home screen" and it behaves like an
-   app. It lives in `docs/` (not `public/`) because that's the folder name GitHub Pages' classic
-   branch-source deploy requires.
-3. **GitHub Pages** serves the `docs/` folder directly from this repo and auto-redeploys every
-   time the Worker commits a new `data.json` (a minute or two after each scheduled run).
+   - **`worker/src/index.mjs`** — Cloudflare Worker entry point, the real scheduled job. Runs on a
+     Cron Trigger **once every 3 days** at 05:00 UTC (see `worker/wrangler.toml`), then commits the
+     result straight to `docs/data.json` via the GitHub API. Deploys with `workers_dev = false` —
+     it only runs on a schedule, never needs a public URL.
+2. **`docs/index.html`** is a static PWA that reads `data.json` and renders one coloured panel per
+   country. It lives in `docs/` because that's the folder GitHub Pages' branch-source deploy uses.
+3. **GitHub Pages** serves `docs/` directly and auto-redeploys each time the Worker commits a new
+   `data.json`.
 
 ### Why a Cloudflare Worker instead of GitHub Actions?
 
-GitHub Actions was the original plan for the scheduled *data-fetch* job, but this GitHub account
-has an account-wide $0 budget on Actions with "stop usage" enabled until a payment method is
-added — confirmed this blocks custom Actions workflows on *both* private and public repos, it's
-not a visibility thing. So that one job moved to a Cloudflare Worker (free plan Cron Triggers)
-instead. GitHub Pages' own *build/deploy* still runs through Actions behind the scenes, but that
-particular workflow isn't blocked by the same budget setting — only custom workflows are.
+GitHub Actions was the original plan for the scheduled data-fetch job, but this account has an
+account-wide $0 Actions budget with "stop usage" enabled, which blocks custom Actions workflows
+on both private and public repos. So that job moved to a Cloudflare Worker (free-plan Cron
+Triggers). GitHub Pages' own build/deploy still runs through Actions behind the scenes, but that
+first-party workflow isn't blocked by the budget setting — only custom workflows are.
 
-## Adding, removing, or changing metrics
+## Adding, removing, or changing indicators & countries
 
-Everything shown on the dashboard is driven by three config files — no code changes needed:
+Everything is driven by two config files — no code changes needed:
 
-- **`config/metrics.json`** — forex currencies, commodities, indices, crypto. Add/remove/edit
-  entries as `{ "symbol": "<yahoo ticker>", "name": "<display name>" }` (forex just needs a
-  3-letter currency code in the `forexCurrencies` array).
-- **`config/watchlist.json`** — the symbols you personally want prices for, grouped under any
-  labels you like (e.g. "JSE", "TFSA", "US"). Each group needs `priceUnits` (`"cents"` for JSE
-  tickers, since Yahoo returns ZA cents; `"units"` for USD tickers) and a `symbols` array of
-  `{ "symbol": "...", "name": "..." }`.
-- **`config/rates.json`** — fallback SA policy rates (Prime, Repo, JIBAR 3M), only used if the
-  live SARB fetch fails on a given run.
+- **`config/countries.json`** — the list of countries (in display order, grouped by `group`:
+  `home` / `major` / `emerging`), each with its flag code, panel colour, central-bank name, and
+  the **manually-maintained slow-moving fields**: `policyRate`, `creditRating`, `bond10y`, and the
+  optional `gdpQoQ` (latest-quarter real GDP growth). These have no reliable free/no-key API, so
+  update the values and their `asOf` dates by hand occasionally. Seed values are best-effort recent
+  figures — verify before relying on them. For South Africa, `policyRate` and `bond10y` are
+  overwritten with live SARB data every run, so the SA seeds are only a fallback.
+- **`config/metrics.json`** — the IMF WEO indicators to fetch, as
+  `{ "key": "...", "code": "<WEO code>", "label": "..." }`. To add another IMF indicator across all
+  countries, add an entry here; to add another country, add it to `config/countries.json` with its
+  ISO-3 `code` (the IMF figures are matched by that code).
 
-After editing any of these and pushing, either wait for the next scheduled Worker run or trigger
-one manually (see "Local testing / manual trigger" below) to see the change reflected.
+`config/rates.json` remains only as a last-resort fallback for SA's repo rate if the SARB API is
+unreachable.
 
-## Macro indicators
-
-The dashboard shows regional macro data automatically, no manual entry:
-
-- **SA policy rates** (Prime, Repo, JIBAR 3M) — fetched live every run from SARB's free public
-  Web API (`custom.resbank.co.za/SarbWebApi`), no key required. Falls back to
-  `config/rates.json` if that request fails.
-- **South Africa** — inflation is fetched from the same SARB API as a ~3-year monthly series
-  (headline CPI, year-on-year), so the dashboard shows the latest month, the current quarter's
-  average, and the year-to-date average — not just one annual figure. GDP growth and
-  unemployment come from the World Bank (annual). PPI (producer prices) is a bonus, since it's
-  in the same SARB payload as CPI.
-- **United States / United Kingdom** — inflation, GDP growth, and unemployment, all World Bank
-  annual figures.
-- **Global** — GDP growth and inflation from the IMF's World Economic Outlook (DataMapper API,
-  also free/no-key). World Bank's own global aggregate (`country=WLD`) turned out to return
-  HTTP 502 server errors for every growth-rate indicator we tried during testing — a bug on
-  their end — so the IMF is used instead for anything "global." Note: the IMF WEO dataset
-  always includes a current-year projection, so a Global tile labelled "this year" may in
-  practice be a forecast rather than a finalised outturn.
-- **Risk & Rates** — VIX, US 10-year Treasury yield, and the US Dollar Index (all Yahoo Finance),
-  plus South Africa's 10-year bond yield (bonus from the same free SARB API used for policy rates).
-
-To add another country, add an entry under `macroCountries` in `config/metrics.json` with its
-World Bank country code (e.g. `"de": { "label": "Germany", "worldBankCountry": "DE" }`) — it'll
-automatically get inflation/GDP growth/unemployment tiles like US/UK. To add or drop a World
-Bank indicator across all countries, edit the `worldBankIndicators` array.
-
-**Parked for later:** biggest single-day movers within JSE Top 40 / S&P 500 / Nasdaq. Doable, but
-needs a maintained list of index constituents (Yahoo doesn't expose one for free) to scan and
-rank — bigger scope than the rest of this dashboard, so it's deliberately not built yet.
+After editing, either wait for the next scheduled Worker run or trigger one manually (see below).
 
 ## Full manual deployment steps
 
-(Everything here is already done and live — included in case you ever need to redo any part of
-it, e.g. after the GitHub token expires or you want to move the Worker to a new account.)
+(Everything here is already done and live — included in case you ever need to redo any part of it,
+e.g. after the GitHub token expires or you move the Worker to a new account.)
 
 ### 1. Generate a GitHub token for the Worker
 
 1. [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new).
 2. **Repository access:** Only select repositories → `fin-dashboard`.
 3. **Permissions → Repository permissions → Contents:** Read and write.
-4. **Expiration:** 90 days is a reasonable default (not indefinite, not so short you're
-   renewing constantly) — just remember it'll need regenerating around then.
-5. Generate, copy the token (starts with `github_pat_...`) — paste it straight into step 2
-   below and don't save it anywhere else.
+4. **Expiration:** 90 days is a reasonable default — just remember it'll need regenerating.
+5. Generate, copy the token (starts with `github_pat_...`) — paste it into step 2 below and don't
+   save it anywhere else.
 
 ### 2. Deploy the Worker
 
@@ -121,19 +111,12 @@ npx wrangler secret put GITHUB_TOKEN       # paste the token from step 1 when pr
 npx wrangler deploy
 ```
 
-This registers the Worker and its Cron Trigger on your Cloudflare account — the schedule in
-`worker/wrangler.toml` takes over from there automatically. It deploys with no public URL
-(`workers_dev = false`), so there's no manual HTTP trigger in production — use
-`wrangler dev --local` (see "Local testing" below) to test changes before pushing.
+This registers the Worker and its Cron Trigger on your Cloudflare account — the 3-day schedule in
+`worker/wrangler.toml` takes over from there. It deploys with no public URL (`workers_dev = false`).
 
-One-time account setup the very first time you ever deploy any Worker: Cloudflare requires
-claiming a free `workers.dev` subdomain before it'll accept *any* Worker deploy, even one with
-no public route. If `wrangler deploy` errors asking for this and the dashboard toggle for it
-doesn't respond (it can be flaky), create a scoped API token at
-[dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens)
-("Edit Cloudflare Workers" template) and call the API directly:
-`PUT https://api.cloudflare.com/client/v4/accounts/<account_id>/workers/subdomain` with body
-`{"subdomain": "<any-name>"}` and `Authorization: Bearer <token>`. One-time only, already done.
+> **Note:** the schedule and the data pipeline both changed in this revision, so the Worker must be
+> re-deployed (`npx wrangler deploy`) for the every-3-days cron and the new IMF/config build to take
+> effect. The existing `GITHUB_TOKEN` secret does not need re-entering.
 
 ### 3. Enable GitHub Pages
 
@@ -143,56 +126,21 @@ gh api repos/deanzulberg/fin-dashboard/pages -X POST \
 ```
 
 Or via the UI: repo **Settings → Pages → Source: Deploy from a branch → Branch: master, /docs**.
-Note: `docs/.nojekyll` must exist (already committed) or the build fails — GitHub's classic Pages
-builder runs everything through Jekyll by default, which mangles a plain static site otherwise.
-
-Every time the Worker commits a new `data.json`, GitHub Pages auto-redeploys within a minute or
-two (it runs through a first-party GitHub Actions workflow that, unlike custom workflows, isn't
-blocked by this account's Actions budget setting).
+`docs/.nojekyll` must exist (already committed) or the Jekyll build mangles the static site.
 
 ### 4. Add to your Android home screen
 
 1. On your phone, open **https://deanzulberg.github.io/fin-dashboard/** in **Chrome**.
-2. Tap the **⋮** menu → **Add to Home screen** (Chrome may also show an automatic "Install app"
-   banner — either works).
-3. Confirm. An icon appears on your home screen that opens the dashboard full-screen, like an app.
-
-## Home screen widgets
-
-**A real Android home-screen widget (the kind that sits on your home screen showing live numbers
-without opening an app) cannot be created from a website or PWA.** That's an Android platform
-limitation — widgets are backed by a native `AppWidgetProvider`, which only a compiled
-native/Kotlin app can register. The workaround is a third-party "webpage as widget" app —
-**WebsiteWidget** — which renders a URL into a home-screen tile on a timer.
-
-**Two options, depending on the device:**
-
-1. **Compact widget (phone home screen)** — `docs/widget.html`: 6 headline figures (USD, GBP,
-   Gold, JSE All Share, S&P 500, BTC) as large, clearly-readable blocks, sized for a 3×2 widget
-   footprint.
-   1. Install **WebsiteWidget** from the Play Store.
-   2. Long-press your home screen → **Widgets → WebsiteWidget** → drop it, then resize to
-      roughly **3 wide × 2 tall**.
-   3. Point it at: `https://deanzulberg.github.io/fin-dashboard/widget.html`
-   4. Refresh interval: **~30 min** (matches how often the Worker updates `data.json`).
-
-2. **Everything, full page (tablet)** — just point a WebsiteWidget instance sized to fill the
-   whole screen at the **main dashboard URL** itself:
-   `https://deanzulberg.github.io/fin-dashboard/` — it already shows every value in the app
-   (forex, commodities, indices, crypto, risk & rates, macro regions, watchlist), already styled,
-   with no cropping needed once the widget covers the full display.
-
-> **Deprecated:** earlier versions of this README documented a KWGT (Kustom Widget Maker) setup
-> and, briefly, several separate per-section widgets (`widget.html?section=...`). Both are
-> replaced by the two options above — simpler to set up, and no per-field formula wiring.
+2. Tap **⋮** → **Add to Home screen** (or the automatic "Install app" banner).
+3. Confirm — an icon appears that opens the dashboard full-screen, like an app.
 
 ## Local testing / manual trigger
 
 ```
-node scripts/fetch-data.mjs                        # regenerates docs/data.json using live data
-python -m http.server 4173 --directory docs         # serve locally to preview
+node scripts/fetch-data.mjs                         # regenerates docs/data.json using live data
+python -m http.server 4173 --directory docs          # serve locally to preview
 
-cd worker && npx wrangler dev --local               # run the Worker locally (needs .dev.vars
-                                                     # with GITHUB_TOKEN=... to test the commit step)
-curl http://127.0.0.1:8787/                          # trigger it manually, see the JSON result
+cd worker && npx wrangler dev --local                # run the Worker locally (needs .dev.vars
+                                                      # with GITHUB_TOKEN=... to test the commit step)
+curl http://127.0.0.1:8787/                           # trigger it manually, see the JSON result
 ```

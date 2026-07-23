@@ -1,4 +1,4 @@
-const SHELL_CACHE = "shell-v1";
+const SHELL_CACHE = "shell-v2";
 const SHELL_FILES = ["./index.html", "./manifest.json"];
 
 self.addEventListener("install", (event) => {

@@ -1,40 +1,11 @@
 {
-  "_comment": "Market/economic indicators shown on the dashboard. Add, remove, or edit any entry — the fetch script reads this file every run, no code changes needed.",
-  "forexCurrencies": ["USD", "EUR", "GBP", "CNY"],
-  "commodities": [
-    { "symbol": "GC=F", "name": "Gold" },
-    { "symbol": "SI=F", "name": "Silver" },
-    { "symbol": "BZ=F", "name": "Brent Crude" },
-    { "symbol": "PL=F", "name": "Platinum" },
-    { "symbol": "HG=F", "name": "Copper" },
-    { "symbol": "NG=F", "name": "Natural Gas" }
-  ],
-  "indices": [
-    { "symbol": "^J200.JO", "name": "JSE Top 40" },
-    { "symbol": "^J203.JO", "name": "JSE All Share" },
-    { "symbol": "^GSPC", "name": "S&P 500" },
-    { "symbol": "^IXIC", "name": "Nasdaq Composite" },
-    { "symbol": "^DJI", "name": "Dow Jones" },
-    { "symbol": "^FTSE", "name": "FTSE 100" }
-  ],
-  "crypto": [
-    { "symbol": "BTC-USD", "name": "Bitcoin" },
-    { "symbol": "ETH-USD", "name": "Ethereum" }
-  ],
-  "riskIndicators": [
-    { "symbol": "^VIX", "name": "VIX (volatility)" },
-    { "symbol": "^TNX", "name": "US 10Y Treasury yield" },
-    { "symbol": "DX-Y.NYB", "name": "US Dollar Index" }
-  ],
-  "_macroComment": "World Bank annual indicators, applied to South Africa plus each country below. SA inflation is additionally overridden with live monthly SARB data (see fetch-data.mjs) for YTD/quarterly detail. 'Global' uses the IMF WEO API instead of World Bank, since World Bank's own aggregate endpoint (country=WLD) errors out server-side for growth-rate indicators.",
-  "worldBankIndicators": [
-    { "key": "inflationPct", "code": "FP.CPI.TOTL.ZG", "label": "Inflation" },
-    { "key": "gdpGrowthPct", "code": "NY.GDP.MKTP.KD.ZG", "label": "GDP growth" },
-    { "key": "unemploymentPct", "code": "SL.UEM.TOTL.ZS", "label": "Unemployment" }
-  ],
-  "macroCountries": {
-    "sa": { "label": "South Africa", "worldBankCountry": "ZA" },
-    "us": { "label": "United States", "worldBankCountry": "US" },
-    "uk": { "label": "United Kingdom", "worldBankCountry": "GB" }
-  }
+  "_comment": "Sovereign macro indicators shown on the dashboard. The numeric annual figures below are fetched from the IMF World Economic Outlook (WEO) DataMapper — a free, no-key API — once per indicator across ALL countries per run. Slow-moving items that have no reliable free feed (central-bank policy rate, credit rating, 10y bond yield, quarterly GDP) live in config/countries.json and are maintained by hand. Edit either file; the fetch script reads both every run, no code changes needed.",
+  "imfIndicators": [
+    { "key": "gdpUsdBn", "code": "NGDPD", "label": "GDP (USD bn)" },
+    { "key": "realGdpGrowthPct", "code": "NGDP_RPCH", "label": "Real GDP growth (annual)" },
+    { "key": "inflationPct", "code": "PCPIPCH", "label": "Inflation (avg CPI)" },
+    { "key": "currentAccountPctGdp", "code": "BCA_NGDPD", "label": "Current-account balance (% GDP)" },
+    { "key": "budgetBalancePctGdp", "code": "GGXCNL_NGDP", "label": "Budget balance (% GDP)" },
+    { "key": "govDebtPctGdp", "code": "GGXWDG_NGDP", "label": "Government debt (% GDP)" }
+  ]
 }

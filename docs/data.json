@@ -1,321 +1,529 @@
 {
-  "generatedAt": "2026-07-02T21:36:48.349Z",
-  "forex": {
-    "asOf": "Thu, 02 Jul 2026 00:02:31 +0000",
-    "USD": 16.411682,
-    "EUR": 18.685076582746138,
-    "GBP": 21.773837985283933,
-    "CNY": 2.413108615223464
-  },
-  "commodities": [
+  "generatedAt": "2026-07-23T19:33:34.301Z",
+  "refreshIntervalDays": 3,
+  "indicators": [
     {
-      "symbol": "GC=F",
-      "name": "Gold",
-      "price": 4135.5,
-      "changePct": 2.81
+      "key": "gdpUsdBn",
+      "label": "GDP (USD bn)"
     },
     {
-      "symbol": "SI=F",
-      "name": "Silver",
-      "price": 61.44,
-      "changePct": 5.61
+      "key": "realGdpGrowthPct",
+      "label": "Real GDP growth (annual)"
     },
     {
-      "symbol": "BZ=F",
-      "name": "Brent Crude",
-      "price": 71.54,
-      "changePct": -2.2
+      "key": "inflationPct",
+      "label": "Inflation (avg CPI)"
     },
     {
-      "symbol": "PL=F",
-      "name": "Platinum",
-      "price": 1631.9,
-      "changePct": 3.65
+      "key": "currentAccountPctGdp",
+      "label": "Current-account balance (% GDP)"
     },
     {
-      "symbol": "HG=F",
-      "name": "Copper",
-      "price": 6.18,
-      "changePct": 1.28
+      "key": "budgetBalancePctGdp",
+      "label": "Budget balance (% GDP)"
     },
     {
-      "symbol": "NG=F",
-      "name": "Natural Gas",
-      "price": 3.21,
-      "changePct": 0.75
+      "key": "govDebtPctGdp",
+      "label": "Government debt (% GDP)"
     }
   ],
-  "indices": [
+  "countries": [
     {
-      "symbol": "^J200.JO",
-      "name": "JSE Top 40",
-      "price": 102083.88,
-      "changePct": 0.19
-    },
-    {
-      "symbol": "^J203.JO",
-      "name": "JSE All Share",
-      "price": 110449.25,
-      "changePct": 0.2
-    },
-    {
-      "symbol": "^GSPC",
-      "name": "S&P 500",
-      "price": 7483.24,
-      "changePct": 1.71
-    },
-    {
-      "symbol": "^IXIC",
-      "name": "Nasdaq Composite",
-      "price": 25832.67,
-      "changePct": 1.87
-    },
-    {
-      "symbol": "^DJI",
-      "name": "Dow Jones",
-      "price": 52900.07,
-      "changePct": 1.89
-    },
-    {
-      "symbol": "^FTSE",
-      "name": "FTSE 100",
-      "price": 10652.87,
-      "changePct": 1.17
-    }
-  ],
-  "crypto": [
-    {
-      "symbol": "BTC-USD",
-      "name": "Bitcoin",
-      "price": 61476.97,
-      "changePct": 3.27
-    },
-    {
-      "symbol": "ETH-USD",
-      "name": "Ethereum",
-      "price": 1699.65,
-      "changePct": 8.23
-    }
-  ],
-  "riskIndicators": [
-    {
-      "symbol": "^VIX",
-      "name": "VIX (volatility)",
-      "price": 16.15,
-      "changePct": -12.28
-    },
-    {
-      "symbol": "^TNX",
-      "name": "US 10Y Treasury yield",
-      "price": 4.49,
-      "changePct": 2.58
-    },
-    {
-      "symbol": "DX-Y.NYB",
-      "name": "US Dollar Index",
-      "price": 100.86,
-      "changePct": -0.25
-    }
-  ],
-  "regions": {
-    "sa": {
+      "code": "ZAF",
+      "iso2": "ZA",
       "label": "South Africa",
-      "gdpGrowthPct": 1.11,
-      "gdpGrowthYear": "last year",
-      "unemploymentPct": 32.39,
-      "unemploymentYear": "last year",
-      "inflation": {
-        "latestPct": 4.5,
-        "quarterAvgPct": 4.25,
-        "quarterNum": 2,
-        "ytdAvgPct": 3.62,
-        "yearLabel": "this year"
+      "group": "home",
+      "color": "#007A4D",
+      "centralBank": "SARB",
+      "policyRateName": "Repo rate",
+      "policyRatePct": 7,
+      "policyRateAsOf": "live (SARB)",
+      "creditRating": {
+        "sp": "BB-",
+        "moodys": "Ba2",
+        "fitch": "BB-",
+        "asOf": "2026-05"
       },
-      "ppi": {
-        "latestPct": 7.81,
-        "quarterAvgPct": 6.29,
-        "quarterNum": 2,
-        "ytdAvgPct": 3.76,
-        "yearLabel": "this year"
-      }
+      "bond10yPct": 8.84,
+      "bond10yAsOf": "live (SARB)",
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 479.96,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 1,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 3.9,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": -0.9,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -4.9,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 78.9,
+      "govDebtPctGdpYear": 2026,
+      "inflationLatestMonthPct": 5,
+      "inflationMonthLabel": "Jun 2026"
     },
-    "us": {
+    {
+      "code": "USA",
+      "iso2": "US",
       "label": "United States",
-      "inflationPct": null,
-      "inflationYear": "last year",
-      "gdpGrowthPct": 2.16,
-      "gdpGrowthYear": "last year",
-      "unemploymentPct": 4.2,
-      "unemploymentYear": "last year"
+      "group": "major",
+      "color": "#3C3B6E",
+      "centralBank": "Federal Reserve",
+      "policyRateName": "Fed funds (upper)",
+      "policyRatePct": 4.5,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": "AA+",
+        "moodys": "Aa1",
+        "fitch": "AA+",
+        "asOf": "2026-05"
+      },
+      "bond10yPct": 4.25,
+      "bond10yAsOf": "2026-07",
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 32383.92,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 2.3,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 3.2,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": -3.7,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -7.5,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 125.8,
+      "govDebtPctGdpYear": 2026
     },
-    "uk": {
+    {
+      "code": "CHN",
+      "iso2": "CN",
+      "label": "China",
+      "group": "major",
+      "color": "#DE2910",
+      "centralBank": "People's Bank of China",
+      "policyRateName": "1Y Loan Prime Rate",
+      "policyRatePct": 3,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": "A+",
+        "moodys": "A1",
+        "fitch": "A+",
+        "asOf": "2026-05"
+      },
+      "bond10yPct": 1.85,
+      "bond10yAsOf": "2026-07",
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 20851.59,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 4.4,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 1.2,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": 3.5,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -8.2,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 106.9,
+      "govDebtPctGdpYear": 2026
+    },
+    {
+      "code": "JPN",
+      "iso2": "JP",
+      "label": "Japan",
+      "group": "major",
+      "color": "#BC002D",
+      "centralBank": "Bank of Japan",
+      "policyRateName": "Policy rate",
+      "policyRatePct": 0.5,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": "A+",
+        "moodys": "A1",
+        "fitch": "A",
+        "asOf": "2026-05"
+      },
+      "bond10yPct": 1.55,
+      "bond10yAsOf": "2026-07",
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 4379.25,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 0.7,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 2.2,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": 3.8,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -2,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 204.4,
+      "govDebtPctGdpYear": 2026
+    },
+    {
+      "code": "DEU",
+      "iso2": "DE",
+      "label": "Germany",
+      "group": "major",
+      "color": "#C8A200",
+      "centralBank": "European Central Bank",
+      "policyRateName": "ECB deposit rate",
+      "policyRatePct": 2,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": "AAA",
+        "moodys": "Aaa",
+        "fitch": "AAA",
+        "asOf": "2026-05"
+      },
+      "bond10yPct": 2.55,
+      "bond10yAsOf": "2026-07",
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 5452.86,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 0.8,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 2.7,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": 3.9,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -3.8,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 64.6,
+      "govDebtPctGdpYear": 2026
+    },
+    {
+      "code": "GBR",
+      "iso2": "GB",
       "label": "United Kingdom",
-      "inflationPct": 3.88,
-      "inflationYear": "last year",
-      "gdpGrowthPct": 1.39,
-      "gdpGrowthYear": "last year",
-      "unemploymentPct": 4.75,
-      "unemploymentYear": "last year"
+      "group": "major",
+      "color": "#1D4ED8",
+      "centralBank": "Bank of England",
+      "policyRateName": "Bank rate",
+      "policyRatePct": 4,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": "AA",
+        "moodys": "Aa3",
+        "fitch": "AA-",
+        "asOf": "2026-05"
+      },
+      "bond10yPct": 4.55,
+      "bond10yAsOf": "2026-07",
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 4264.79,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 0.8,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 3.2,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": -3.4,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -3.9,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 103.6,
+      "govDebtPctGdpYear": 2026
     },
-    "global": {
-      "label": "Global",
-      "gdpGrowthPct": 3.1,
-      "gdpGrowthYear": "this year",
-      "inflationPct": 4.4,
-      "inflationYear": "this year"
+    {
+      "code": "IND",
+      "iso2": "IN",
+      "label": "India",
+      "group": "major",
+      "color": "#FF9933",
+      "centralBank": "Reserve Bank of India",
+      "policyRateName": "Repo rate",
+      "policyRatePct": 5.5,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": "BBB",
+        "moodys": "Baa3",
+        "fitch": "BBB-",
+        "asOf": "2026-05"
+      },
+      "bond10yPct": 6.35,
+      "bond10yAsOf": "2026-07",
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 4153.19,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 6.5,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 4.7,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": -2,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -7.4,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 83.4,
+      "govDebtPctGdpYear": 2026
+    },
+    {
+      "code": "ARE",
+      "iso2": "AE",
+      "label": "United Arab Emirates",
+      "group": "major",
+      "color": "#00732F",
+      "centralBank": "Central Bank of the UAE",
+      "policyRateName": "Base rate",
+      "policyRatePct": 4.4,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": "AA",
+        "moodys": "Aa2",
+        "fitch": "AA-",
+        "asOf": "2026-05"
+      },
+      "bond10yPct": 4.2,
+      "bond10yAsOf": "2026-07",
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 621.55,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 3.1,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 2.5,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": 11.4,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": 4.9,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 31.4,
+      "govDebtPctGdpYear": 2026
+    },
+    {
+      "code": "SAU",
+      "iso2": "SA",
+      "label": "Saudi Arabia",
+      "group": "major",
+      "color": "#006C35",
+      "centralBank": "Saudi Central Bank",
+      "policyRateName": "Repo rate",
+      "policyRatePct": 5,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": "A+",
+        "moodys": "Aa3",
+        "fitch": "A+",
+        "asOf": "2026-05"
+      },
+      "bond10yPct": 4.9,
+      "bond10yAsOf": "2026-07",
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 1388.68,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 3.1,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 2.3,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": -1.6,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -3.5,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 32.1,
+      "govDebtPctGdpYear": 2026
+    },
+    {
+      "code": "BRA",
+      "iso2": "BR",
+      "label": "Brazil",
+      "group": "emerging",
+      "color": "#009C3B",
+      "centralBank": "Banco Central do Brasil",
+      "policyRateName": "Selic",
+      "policyRatePct": 15,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": "BB",
+        "moodys": "Ba1",
+        "fitch": "BB",
+        "asOf": "2026-05"
+      },
+      "bond10yPct": 13.5,
+      "bond10yAsOf": "2026-07",
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 2635.91,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 1.9,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 4,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": -2.7,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -7.7,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 96.5,
+      "govDebtPctGdpYear": 2026
+    },
+    {
+      "code": "NGA",
+      "iso2": "NG",
+      "label": "Nigeria",
+      "group": "emerging",
+      "color": "#008751",
+      "centralBank": "Central Bank of Nigeria",
+      "policyRateName": "Monetary Policy Rate",
+      "policyRatePct": 27.5,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": "B-",
+        "moodys": "Caa1",
+        "fitch": "B-",
+        "asOf": "2026-05"
+      },
+      "bond10yPct": 18.5,
+      "bond10yAsOf": "2026-07",
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 377.37,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 4.1,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 16,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": 5.8,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -4.4,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 32.3,
+      "govDebtPctGdpYear": 2026
+    },
+    {
+      "code": "EGY",
+      "iso2": "EG",
+      "label": "Egypt",
+      "group": "emerging",
+      "color": "#CE1126",
+      "centralBank": "Central Bank of Egypt",
+      "policyRateName": "Overnight lending rate",
+      "policyRatePct": 24,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": "B-",
+        "moodys": "Caa1",
+        "fitch": "B",
+        "asOf": "2026-05"
+      },
+      "bond10yPct": 22,
+      "bond10yAsOf": "2026-07",
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 429.65,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 4.2,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 13.2,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": -4.2,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -12.1,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 87,
+      "govDebtPctGdpYear": 2026
+    },
+    {
+      "code": "KEN",
+      "iso2": "KE",
+      "label": "Kenya",
+      "group": "emerging",
+      "color": "#006600",
+      "centralBank": "Central Bank of Kenya",
+      "policyRateName": "Central Bank Rate",
+      "policyRatePct": 9.75,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": "B-",
+        "moodys": "Caa1",
+        "fitch": "B-",
+        "asOf": "2026-05"
+      },
+      "bond10yPct": 13.8,
+      "bond10yAsOf": "2026-07",
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 147.26,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 4.5,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 5.9,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": -4.1,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -6.4,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 71.6,
+      "govDebtPctGdpYear": 2026
+    },
+    {
+      "code": "ZMB",
+      "iso2": "ZM",
+      "label": "Zambia",
+      "group": "emerging",
+      "color": "#198A00",
+      "centralBank": "Bank of Zambia",
+      "policyRateName": "Policy rate",
+      "policyRatePct": 14.5,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": "SD",
+        "moodys": "Caa2",
+        "fitch": "RD",
+        "asOf": "2026-05"
+      },
+      "bond10yPct": null,
+      "bond10yAsOf": null,
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 41.24,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 4.3,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 9,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": 0.9,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -4.9,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 86,
+      "govDebtPctGdpYear": 2025
+    },
+    {
+      "code": "ZWE",
+      "iso2": "ZW",
+      "label": "Zimbabwe",
+      "group": "emerging",
+      "color": "#319400",
+      "centralBank": "Reserve Bank of Zimbabwe",
+      "policyRateName": "Bank policy rate",
+      "policyRatePct": 35,
+      "policyRateAsOf": "2026-07",
+      "creditRating": {
+        "sp": null,
+        "moodys": null,
+        "fitch": null,
+        "asOf": "not rated"
+      },
+      "bond10yPct": null,
+      "bond10yAsOf": null,
+      "gdpQoQPct": null,
+      "gdpQoQAsOf": null,
+      "gdpUsdBn": 56.71,
+      "gdpUsdBnYear": 2026,
+      "realGdpGrowthPct": 5,
+      "realGdpGrowthPctYear": 2026,
+      "inflationPct": 8,
+      "inflationPctYear": 2026,
+      "currentAccountPctGdp": 3.7,
+      "currentAccountPctGdpYear": 2026,
+      "budgetBalancePctGdp": -0.8,
+      "budgetBalancePctGdpYear": 2026,
+      "govDebtPctGdp": 42.3,
+      "govDebtPctGdpYear": 2026
     }
-  },
-  "rates": {
-    "primeRate": 10.5,
-    "repoRate": 7,
-    "jibar3m": 7,
-    "bond10y": 8.57,
-    "asOf": "2026-07-02",
-    "source": "SARB live"
-  },
-  "watchlist": {
-    "jse": {
-      "label": "JSE",
-      "priceUnits": "cents",
-      "symbols": [
-        {
-          "symbol": "AGL.JO",
-          "name": "Anglo American",
-          "price": 811.5,
-          "changePct": 1.69,
-          "priceZAR": null
-        },
-        {
-          "symbol": "ANG.JO",
-          "name": "AngloGold Ashanti",
-          "price": 1369.92,
-          "changePct": 2.11,
-          "priceZAR": null
-        },
-        {
-          "symbol": "CPI.JO",
-          "name": "Capitec",
-          "price": 4752.21,
-          "changePct": 1.65,
-          "priceZAR": null
-        },
-        {
-          "symbol": "CLS.JO",
-          "name": "Clicks Group",
-          "price": 230.39,
-          "changePct": 4.25,
-          "priceZAR": null
-        },
-        {
-          "symbol": "DSY.JO",
-          "name": "Discovery",
-          "price": 267.74,
-          "changePct": -4.72,
-          "priceZAR": null
-        },
-        {
-          "symbol": "OUT.JO",
-          "name": "Outsurance Group",
-          "price": 79.19,
-          "changePct": 3.94,
-          "priceZAR": null
-        },
-        {
-          "symbol": "PPH.JO",
-          "name": "Pepkor Holdings",
-          "price": 22.15,
-          "changePct": 1.14,
-          "priceZAR": null
-        },
-        {
-          "symbol": "SHP.JO",
-          "name": "Shoprite Holdings",
-          "price": 291.3,
-          "changePct": -0.91,
-          "priceZAR": null
-        },
-        {
-          "symbol": "SBK.JO",
-          "name": "Standard Bank Group",
-          "price": 321.27,
-          "changePct": 1,
-          "priceZAR": null
-        }
-      ]
-    },
-    "tfsa": {
-      "label": "TFSA",
-      "priceUnits": "cents",
-      "symbols": [
-        {
-          "symbol": "STX40.JO",
-          "name": "Satrix 40 ETF",
-          "price": 103.73,
-          "changePct": 0.21,
-          "priceZAR": null
-        }
-      ]
-    },
-    "us": {
-      "label": "US",
-      "priceUnits": "units",
-      "symbols": [
-        {
-          "symbol": "CVX",
-          "name": "Chevron",
-          "price": 169.2,
-          "changePct": -1.76,
-          "priceZAR": 2776.86
-        },
-        {
-          "symbol": "INTC",
-          "name": "Intel",
-          "price": 120.35,
-          "changePct": -9.42,
-          "priceZAR": 1975.15
-        },
-        {
-          "symbol": "JPM",
-          "name": "JPMorgan Chase",
-          "price": 334.47,
-          "changePct": -0.19,
-          "priceZAR": 5489.22
-        },
-        {
-          "symbol": "TSLA",
-          "name": "Tesla",
-          "price": 393.45,
-          "changePct": 4.89,
-          "priceZAR": 6457.18
-        },
-        {
-          "symbol": "WMT",
-          "name": "Walmart",
-          "price": 111.84,
-          "changePct": -3.4,
-          "priceZAR": 1835.48
-        }
-      ]
-    }
-  },
-  "widget": {
-    "generatedAt": "2026-07-02T21:36:48.349Z",
-    "usdZar": 16.41,
-    "gbpZar": 21.77,
-    "gold": 4135.5,
-    "goldChangePct": 2.81,
-    "silver": 61.44,
-    "silverChangePct": 5.61,
-    "brentCrude": 71.54,
-    "brentCrudeChangePct": -2.2,
-    "naturalGas": 3.21,
-    "naturalGasChangePct": 0.75,
-    "jseAllShare": 110449.25,
-    "jseAllShareChangePct": 0.2,
-    "spx500": 7483.24,
-    "spx500ChangePct": 1.71,
-    "btcUsd": 61476.97,
-    "saInflationQuarterPct": 4.25,
-    "saInflationQuarterNum": 2
-  }
+  ]
 }

@@ -1,0 +1,126 @@
+{
+  "_comment": "Countries shown on the dashboard, in display order, grouped by 'group' (home / major / emerging). The numeric macro figures (GDP, real growth, inflation, current account, budget balance, debt) are fetched live from the IMF WEO each run and merged in by code. The fields in each entry below are the SLOW-MOVING items that have no reliable free/no-key API and so are maintained by hand: centralBank + policyRate, creditRating (S&P / Moody's / Fitch), bond10y (10-year govt bond yield), and gdpQoQ (latest quarter real GDP growth). Update the values and their asOf dates occasionally. Seed values below are best-effort recent figures — verify before relying on them. For South Africa, policyRate and bond10y are overridden with live SARB data every run, so the SA seeds here are only a fallback.",
+  "_asOfNote": "asOf is free-form (e.g. '2026-07' or '2026-Q1'). null value = shown as '—'.",
+  "countries": [
+    {
+      "code": "ZAF", "iso2": "ZA", "label": "South Africa", "group": "home", "color": "#007A4D",
+      "centralBank": "SARB",
+      "policyRate": { "name": "Repo rate", "value": 7.00, "asOf": "2026-07" },
+      "creditRating": { "sp": "BB-", "moodys": "Ba2", "fitch": "BB-", "asOf": "2026-05" },
+      "bond10y": { "value": 9.85, "asOf": "2026-07" },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "USA", "iso2": "US", "label": "United States", "group": "major", "color": "#3C3B6E",
+      "centralBank": "Federal Reserve",
+      "policyRate": { "name": "Fed funds (upper)", "value": 4.50, "asOf": "2026-07" },
+      "creditRating": { "sp": "AA+", "moodys": "Aa1", "fitch": "AA+", "asOf": "2026-05" },
+      "bond10y": { "value": 4.25, "asOf": "2026-07" },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "CHN", "iso2": "CN", "label": "China", "group": "major", "color": "#DE2910",
+      "centralBank": "People's Bank of China",
+      "policyRate": { "name": "1Y Loan Prime Rate", "value": 3.00, "asOf": "2026-07" },
+      "creditRating": { "sp": "A+", "moodys": "A1", "fitch": "A+", "asOf": "2026-05" },
+      "bond10y": { "value": 1.85, "asOf": "2026-07" },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "JPN", "iso2": "JP", "label": "Japan", "group": "major", "color": "#BC002D",
+      "centralBank": "Bank of Japan",
+      "policyRate": { "name": "Policy rate", "value": 0.50, "asOf": "2026-07" },
+      "creditRating": { "sp": "A+", "moodys": "A1", "fitch": "A", "asOf": "2026-05" },
+      "bond10y": { "value": 1.55, "asOf": "2026-07" },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "DEU", "iso2": "DE", "label": "Germany", "group": "major", "color": "#C8A200",
+      "centralBank": "European Central Bank",
+      "policyRate": { "name": "ECB deposit rate", "value": 2.00, "asOf": "2026-07" },
+      "creditRating": { "sp": "AAA", "moodys": "Aaa", "fitch": "AAA", "asOf": "2026-05" },
+      "bond10y": { "value": 2.55, "asOf": "2026-07" },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "GBR", "iso2": "GB", "label": "United Kingdom", "group": "major", "color": "#1D4ED8",
+      "centralBank": "Bank of England",
+      "policyRate": { "name": "Bank rate", "value": 4.00, "asOf": "2026-07" },
+      "creditRating": { "sp": "AA", "moodys": "Aa3", "fitch": "AA-", "asOf": "2026-05" },
+      "bond10y": { "value": 4.55, "asOf": "2026-07" },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "IND", "iso2": "IN", "label": "India", "group": "major", "color": "#FF9933",
+      "centralBank": "Reserve Bank of India",
+      "policyRate": { "name": "Repo rate", "value": 5.50, "asOf": "2026-07" },
+      "creditRating": { "sp": "BBB", "moodys": "Baa3", "fitch": "BBB-", "asOf": "2026-05" },
+      "bond10y": { "value": 6.35, "asOf": "2026-07" },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "ARE", "iso2": "AE", "label": "United Arab Emirates", "group": "major", "color": "#00732F",
+      "centralBank": "Central Bank of the UAE",
+      "policyRate": { "name": "Base rate", "value": 4.40, "asOf": "2026-07" },
+      "creditRating": { "sp": "AA", "moodys": "Aa2", "fitch": "AA-", "asOf": "2026-05" },
+      "bond10y": { "value": 4.20, "asOf": "2026-07" },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "SAU", "iso2": "SA", "label": "Saudi Arabia", "group": "major", "color": "#006C35",
+      "centralBank": "Saudi Central Bank",
+      "policyRate": { "name": "Repo rate", "value": 5.00, "asOf": "2026-07" },
+      "creditRating": { "sp": "A+", "moodys": "Aa3", "fitch": "A+", "asOf": "2026-05" },
+      "bond10y": { "value": 4.90, "asOf": "2026-07" },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "BRA", "iso2": "BR", "label": "Brazil", "group": "emerging", "color": "#009C3B",
+      "centralBank": "Banco Central do Brasil",
+      "policyRate": { "name": "Selic", "value": 15.00, "asOf": "2026-07" },
+      "creditRating": { "sp": "BB", "moodys": "Ba1", "fitch": "BB", "asOf": "2026-05" },
+      "bond10y": { "value": 13.50, "asOf": "2026-07" },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "NGA", "iso2": "NG", "label": "Nigeria", "group": "emerging", "color": "#008751",
+      "centralBank": "Central Bank of Nigeria",
+      "policyRate": { "name": "Monetary Policy Rate", "value": 27.50, "asOf": "2026-07" },
+      "creditRating": { "sp": "B-", "moodys": "Caa1", "fitch": "B-", "asOf": "2026-05" },
+      "bond10y": { "value": 18.50, "asOf": "2026-07" },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "EGY", "iso2": "EG", "label": "Egypt", "group": "emerging", "color": "#CE1126",
+      "centralBank": "Central Bank of Egypt",
+      "policyRate": { "name": "Overnight lending rate", "value": 24.00, "asOf": "2026-07" },
+      "creditRating": { "sp": "B-", "moodys": "Caa1", "fitch": "B", "asOf": "2026-05" },
+      "bond10y": { "value": 22.00, "asOf": "2026-07" },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "KEN", "iso2": "KE", "label": "Kenya", "group": "emerging", "color": "#006600",
+      "centralBank": "Central Bank of Kenya",
+      "policyRate": { "name": "Central Bank Rate", "value": 9.75, "asOf": "2026-07" },
+      "creditRating": { "sp": "B-", "moodys": "Caa1", "fitch": "B-", "asOf": "2026-05" },
+      "bond10y": { "value": 13.80, "asOf": "2026-07" },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "ZMB", "iso2": "ZM", "label": "Zambia", "group": "emerging", "color": "#198A00",
+      "centralBank": "Bank of Zambia",
+      "policyRate": { "name": "Policy rate", "value": 14.50, "asOf": "2026-07" },
+      "creditRating": { "sp": "SD", "moodys": "Caa2", "fitch": "RD", "asOf": "2026-05" },
+      "bond10y": { "value": null, "asOf": null },
+      "gdpQoQ": { "value": null, "asOf": null }
+    },
+    {
+      "code": "ZWE", "iso2": "ZW", "label": "Zimbabwe", "group": "emerging", "color": "#319400",
+      "centralBank": "Reserve Bank of Zimbabwe",
+      "policyRate": { "name": "Bank policy rate", "value": 35.00, "asOf": "2026-07" },
+      "creditRating": { "sp": null, "moodys": null, "fitch": null, "asOf": "not rated" },
+      "bond10y": { "value": null, "asOf": null },
+      "gdpQoQ": { "value": null, "asOf": null }
+    }
+  ]
+}

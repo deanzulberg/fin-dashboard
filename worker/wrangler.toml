@@ -7,7 +7,9 @@ compatibility_date = "2026-07-01"
 # that a publicly-routable Worker would need.
 workers_dev = false
 
-# Every 30 min, 05:00-21:30 UTC = 07:00-23:30 SAST, weekdays only.
-# Same schedule as the (now unused) GitHub Actions workflow.
+# Once every 3 days at 05:00 UTC (07:00 SAST). These are slow-moving sovereign
+# macro indicators (mostly annual IMF figures), so there is nothing to gain from
+# refreshing more often. `*/3` fires on days 1,4,7,...,31; the month boundary can
+# make one interval 1-2 days shorter, which is immaterial here.
 [triggers]
-crons = ["*/30 5-21 * * 1-5"]
+crons = ["0 5 */3 * *"]
