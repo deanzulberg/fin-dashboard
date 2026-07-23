@@ -28,16 +28,20 @@
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    /* Soft amber/teal glows + a faint tiled bar-chart column pattern, for a
-       macro/economics feel instead of the old candlestick ticker pattern. */
+    /* Wallpaper: warm amber + cool teal glows over a large, faint globe
+       graticule (the app spans many sovereigns) and a fine plotting-grid
+       texture. Replaces the old tiled bar-chart pattern, which read as
+       trading data rather than slow-moving macro data. */
     background-image:
-      radial-gradient(650px circle at 12% -8%, rgba(216, 161, 60, 0.16), transparent 60%),
-      radial-gradient(560px circle at 100% 6%, rgba(78, 201, 165, 0.16), transparent 60%),
-      radial-gradient(620px circle at 50% 108%, rgba(30, 138, 0, 0.12), transparent 55%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='white' fill-opacity='0.045'%3E%3Crect x='8' y='34' width='7' height='22'/%3E%3Crect x='19' y='24' width='7' height='32'/%3E%3Crect x='30' y='40' width='7' height='16'/%3E%3Crect x='41' y='18' width='7' height='38'/%3E%3Crect x='52' y='30' width='7' height='26'/%3E%3C/g%3E%3C/svg%3E"),
+      radial-gradient(720px circle at 8% -10%, rgba(216, 161, 60, 0.20), transparent 62%),
+      radial-gradient(620px circle at 102% 4%, rgba(78, 201, 165, 0.17), transparent 60%),
+      radial-gradient(700px circle at 50% 112%, rgba(41, 118, 148, 0.16), transparent 58%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.055' stroke-width='1.4'%3E%3Ccircle cx='200' cy='200' r='160'/%3E%3Cellipse cx='200' cy='200' rx='54' ry='160'/%3E%3Cellipse cx='200' cy='200' rx='108' ry='160'/%3E%3Cline x1='200' y1='40' x2='200' y2='360'/%3E%3Cline x1='40' y1='200' x2='360' y2='200'/%3E%3Cline x1='45.1' y1='140' x2='354.9' y2='140'/%3E%3Cline x1='45.1' y1='260' x2='354.9' y2='260'/%3E%3Cline x1='94.2' y1='90' x2='305.8' y2='90'/%3E%3Cline x1='94.2' y1='310' x2='305.8' y2='310'/%3E%3C/g%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cg fill='%23ffffff' fill-opacity='0.035'%3E%3Ccircle cx='1.6' cy='1.6' r='1.6'/%3E%3C/g%3E%3C/svg%3E"),
       linear-gradient(180deg, var(--bg2) 0%, var(--bg) 60%);
-    background-repeat: no-repeat, no-repeat, no-repeat, repeat, no-repeat;
-    background-size: auto, auto, auto, 64px 64px, cover;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, no-repeat;
+    background-position: center, center, center, 88% 92px, top left, center;
+    background-size: auto, auto, auto, 460px 460px, 34px 34px, cover;
     background-attachment: fixed;
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
